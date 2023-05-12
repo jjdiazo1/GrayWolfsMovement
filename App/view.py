@@ -31,7 +31,8 @@ from DISClib.DataStructures import mapentry as me
 assert cf
 from tabulate import tabulate
 import traceback
-
+default_limit = 1000 
+sys.setrecursionlimit(default_limit*10)
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -45,7 +46,7 @@ def new_controller():
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    pass
+    return controller.new_controller()
 
 
 def print_menu():
@@ -67,7 +68,7 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    pass
+    print(controller.load_data(control))
 
 
 def print_data(control, id):

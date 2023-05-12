@@ -26,6 +26,7 @@
 
 
 import config as cf
+from math import radians, cos, sin, asin, sqrt
 from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
@@ -54,25 +55,49 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 """
 
 # Construccion de modelos
+'''
+"ADJ_LIST"
+    "ADJ_MTX": ".adjlist",
 
-
+'''
 def new_data_structs():
     """
     Inicializa las estructuras de datos del modelo. Las crea de
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    pass
+    return gr.newGraph(datastructure="ADJ_LIST")
 
 
 # Funciones para agregar informacion al modelo
 
-def add_data(data_structs, data):
+def add_data(hash_table_per_wolf,data):
     """
     Función para agregar nuevos elementos a la lista
     """
     #TODO: Crear la función para agregar elementos a una lista
-    pass
+
+    if mp.contains(hash_table_per_wolf,data['individual-local-identifier']):
+        lt.addLast(mp.get(hash_table_per_wolf,data['individual-local-identifier'])['value'],data)
+    else:
+        value=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(value,data)
+        mp.put(hash_table_per_wolf,data['individual-local-identifier'],value)
+    return hash_table_per_wolf
+
+def add_data_special(hash_table_per_wolf,data):
+    """
+    Función para agregar nuevos elementos a la lista
+    """
+    #TODO: Crear la función para agregar elementos a una lista
+
+    if mp.contains(hash_table_per_wolf,data['lon_lat']):
+        mp.get(hash_table_per_wolf,data['lon_lat'])['value']['size']+=1
+    else:
+        value=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(value,0)
+        mp.put(hash_table_per_wolf,data['lon_lat'],value)
+    return hash_table_per_wolf
 
 
 # Funciones para creacion de datos
@@ -199,3 +224,14 @@ def sort(data_structs):
     """
     #TODO: Crear función de ordenamiento
     pass
+
+def cmp_time(data_1,data_2):
+    return data_1['time_datetime']<=data_2['time_datetime']
+def haversine_equation(lon1, lat1, lon2, lat2):
+    lon1, lat1, lon2, lat2 = radians(float(lon1)),radians(float(lat1)),radians(float(lon2)),radians(float(lat2))
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371
+    return c * r

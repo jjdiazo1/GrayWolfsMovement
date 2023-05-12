@@ -23,8 +23,14 @@
 import config as cf
 import model
 import time
+from datetime import datetime
 import csv
 import tracemalloc
+from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
+from DISClib.Algorithms.Sorting import quicksort as quk
+from DISClib.ADT import graph as gr
+csv.field_size_limit(2147483647)
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -36,28 +42,60 @@ def new_controller():
     Crea una instancia del modelo
     """
     #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    return model.new_data_structs()
 
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_data(control):
     """
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    pass
+    raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-small.csv", encoding = "utf-8"), delimiter= ",")
+    hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=1,maptype='PROBING')
+    nodes=mp.newMap(loadfactor=0.75,maptype='PROBING')
+    hiper_nodes=lt.newList(datastructure="ARRAY_LIST")
+    array_vertex=lt.newList(datastructure='ARRAY_LIST')
+    for line in raw_data:
+        line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
+        line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
+        model.add_data(hash_table_per_wolf,line)
+        model.add_data_special(nodes,line)
+        
+    for i in lt.iterator(hash_table_per_wolf['table']):
+        if i['value']!=None:
+            i['value']=quk.sort(i['value'],model.cmp_time)
+    
+    for wolf in lt.iterator(hash_table_per_wolf['table']):
+        if wolf['key']!=None:
+            for j in lt.iterator(wolf['value']): 
+                a=str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']).replace('.','p').replace('-','m')
+                lt.addLast(array_vertex,a)
+                gr.insertVertex(control,a)
+                
+    for wolf in lt.iterator(hash_table_per_wolf['table']):
+        if wolf['key']!=None:
+            for k in range(0,len(wolf['value']['elements'])-1):
+                gr.addEdge(control,str(str(wolf['value']['elements'][k]['lon_lat'][0])+'_'+str(wolf['value']['elements'][k]['lon_lat'][1])+'_'+wolf['value']['elements'][k]['individual-local-identifier']).replace('.','p').replace('-','m'),str(str(wolf['value']['elements'][k+1]['lon_lat'][0])+'_'+str(wolf['value']['elements'][k+1]['lon_lat'][1])+'_'+wolf['value']['elements'][k+1]['individual-local-identifier']).replace('.','p').replace('-','m'),model.haversine_equation(wolf['value']['elements'][k]['lon_lat'][0],wolf['value']['elements'][k]['lon_lat'][1],wolf['value']['elements'][k+1]['lon_lat'][0],wolf['value']['elements'][k+1]['lon_lat'][1]))
+    for key in lt.iterator(nodes['table']):
+        if key['key']!=None:
+            if key['value']['size']>1:
+                lt.addLast(hiper_nodes,key['key'])
 
+    for key in lt.iterator(hiper_nodes):
+      
+        hiper_n=str(key[0]).replace('.','p').replace('-','m')+'_'+str(key[1]).replace('.','p').replace('-','m')
+        gr.insertVertex(control,hiper_n)
+        for q in lt.iterator(array_vertex):
+            d_split=q.split('_') 
+            if d_split[0]+'_'+d_split[1]==hiper_n:
+                gr.addEdge(control,q,hiper_n,0)
+    print(control)
+        
+   
 
 # Funciones de ordenamiento
-
-def sort(control):
-    """
-    Ordena los datos del modelo
-    """
-    #TODO: Llamar la función del modelo para ordenar los datos
-    pass
-
 
 # Funciones de consulta sobre el catálogo
 
