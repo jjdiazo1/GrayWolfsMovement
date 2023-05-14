@@ -55,52 +55,46 @@ def new_controller():
 
 
 def load_data(control):
-   """
-   Carga los datos del reto
-   """
-   # TODO: Realizar la carga de datos
-   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-large.csv", encoding = "utf-8"), delimiter= ",")
-   hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=1,maptype='PROBING')
-   hiper_nodes=lt.newList(datastructure="ARRAY_LIST")
-   array_vertex=lt.newList(datastructure='ARRAY_LIST')
+    """
+    Carga los datos del reto
+    """
+    # TODO: Realizar la carga de datos
+    raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-small.csv", encoding = "utf-8"), delimiter= ",")
+    hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+    hiper_nodes=mp.newMap(loadfactor=0.75,maptype='PROBING')  
+    array_vertex=lt.newList(datastructure='ARRAY_LIST')
   
-   for line in raw_data:
-       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
-       line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
-       lt.addLast(hiper_nodes,line['lon_lat'])
-       model.add_data(hash_table_per_wolf,line)
-   h_n= set()
-   hiper_nodes_o = [x for x in hiper_nodes['elements'] if x in h_n or (h_n.add(x) or False)]
-              
-   for wolf in lt.iterator(hash_table_per_wolf['table']):
-       if wolf['key']!=None:
-           for j in lt.iterator(quk.sort(wolf['value'],model.cmp_time)):
-               lt.addLast(array_vertex,str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']).replace('.','p').replace('-','m'))
-   v_r = set()
-   array_vertex_o = [x for x in array_vertex['elements'] if x in v_r or (v_r.add(x) or False)]  
-   for i in array_vertex_o:
-       gr.insertVertex(control,i)
+    for line in raw_data:
+        line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
+        line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
+        model.add_data(hash_table_per_wolf,line)
+        model.add_data(hiper_nodes,line)
+       
+    for wolf in lt.iterator(hash_table_per_wolf['table']):
+        if wolf['key']!=None:
+            for j in lt.iterator(quk.sort(wolf['value'],model.cmp_time)):
+                vertex=str(str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']+'_').replace('.','p').replace('-','m')+j['timestamp'])
+                gr.insertVertex(control,vertex)
+                lt.addLast(array_vertex,vertex)
+
+    for ver in range(0,len(array_vertex['elements'])-1):
+        s_list_1=array_vertex['elements'][ver].split('_')
+        s_list_2=array_vertex['elements'][ver+1].split('_')
+        gr.addEdge(control,array_vertex['elements'][ver],array_vertex['elements'][ver+1],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
 
 
-   for ver in range(0,len(array_vertex_o)-1):
-       s_list_1=array_vertex_o[ver].split('_')
-       s_list_2=array_vertex_o[ver+1].split('_')
-       gr.addEdge(control,array_vertex_o[ver],array_vertex_o[ver+1],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
+    for key in lt.iterator(hiper_nodes['table']):
+        if key['value']!=None:
+            if key['value']['size']>1:
+                hiper_n=str(key['key'][0]).replace('.','p').replace('-','m')+'_'+str(key['key'][1]).replace('.','p').replace('-','m')
+                gr.insertVertex(control,hiper_n)
+                for q in lt.iterator(array_vertex):
+                    d_split=q.split('_')
+                    if d_split[0]+'_'+d_split[1]==hiper_n:
+                        gr.addEdge(control,q,hiper_n,0)
 
+    return control
 
-
-
-   for key in hiper_nodes_o:
-    
-       hiper_n=str(key[0]).replace('.','p').replace('-','m')+'_'+str(key[1]).replace('.','p').replace('-','m')
-       gr.insertVertex(control,hiper_n)
-       for q in array_vertex_o:
-           d_split=q.split('_')
-           if d_split[0]+'_'+d_split[1]==hiper_n:
-               gr.addEdge(control,q,hiper_n,0)
-
-
-   return control
 
 
 # Funciones de ordenamiento

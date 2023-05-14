@@ -32,7 +32,7 @@ assert cf
 from tabulate import tabulate
 import traceback
 default_limit = 1000 
-sys.setrecursionlimit(default_limit*10)
+sys.setrecursionlimit(default_limit*100000)
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion

@@ -66,7 +66,7 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    return gr.newGraph(datastructure="ADJ_LIST")
+    return gr.newGraph(datastructure="ADJ_MTX")
 
 
 # Funciones para agregar informacion al modelo
