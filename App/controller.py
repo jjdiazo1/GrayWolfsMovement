@@ -92,7 +92,7 @@ def load_data(control):
                d_split=q.split('_')
                if d_split[0]+'_'+d_split[1]==hiper_n:
                   gr.addEdge(control,q,hiper_n,0)
-   return control
+   return control,hash_table_per_wolf
 
 
 # Funciones de ordenamiento
