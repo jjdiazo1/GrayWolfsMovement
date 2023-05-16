@@ -85,19 +85,33 @@ def add_data(hash_table_per_wolf,data):
         mp.put(hash_table_per_wolf,data['individual-local-identifier'],value)
     return hash_table_per_wolf
 
-# def add_data_special(hash_table_per_wolf,data):
-#     """
-#     Función para agregar nuevos elementos a la lista
-#     """
-#     #TODO: Crear la función para agregar elementos a una lista
+def add_data_hiper_nodes(hash_table_per_wolf,data):
+    """
+    Función para agregar nuevos elementos a la lista
+    """
+    #TODO: Crear la función para agregar elementos a una lista
 
-#     if mp.contains(hash_table_per_wolf,data['lon_lat']):
-#         mp.get(hash_table_per_wolf,data['lon_lat'])['value']['size']+=1
-#     else:
-#         value=lt.newList(datastructure='ARRAY_LIST')
-#         lt.addLast(value,0)
-#         mp.put(hash_table_per_wolf,data['lon_lat'],value)
-#     return hash_table_per_wolf
+    if mp.contains(hash_table_per_wolf,data['individual-local-identifier']):
+        lt.addLast(mp.get(hash_table_per_wolf,data['individual-local-identifier'])['value'],data['lon_lat'])
+    else:
+        value=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(value,data['lon_lat'])
+        mp.put(hash_table_per_wolf,data['individual-local-identifier'],value)
+    return hash_table_per_wolf
+
+def add_data_special(hash_table_per_wolf,data):
+    """
+    Función para agregar nuevos elementos a la lista
+    """
+    #TODO: Crear la función para agregar elementos a una lista
+
+    if mp.contains(hash_table_per_wolf,data):
+        mp.get(hash_table_per_wolf,data)['value']['size']+=1
+    else:
+        value=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(value,0)
+        mp.put(hash_table_per_wolf,data,value)
+    return hash_table_per_wolf
 
 # Funciones para creacion de datos
 
