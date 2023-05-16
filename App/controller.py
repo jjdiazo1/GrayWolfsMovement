@@ -59,40 +59,57 @@ def load_data(control):
    Carga los datos del reto
    """
    # TODO: Realizar la carga de datos
-   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-large.csv", encoding = "utf-8"), delimiter= ",")
-   hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
-   hiper_nodes=mp.newMap(loadfactor=0.75,maptype='PROBING')  
-   array_vertex=lt.newList(datastructure='ARRAY_LIST')
+   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-small.csv", encoding = "utf-8"), delimiter= ",")
+   hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING') 
+   hiper_nodes=lt.newList(datastructure='ARRAY_LIST')
+   array_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+   
+   
   
    for line in raw_data:
       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
       line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
       model.add_data(hash_table_per_wolf,line)
-      model.add_data(hiper_nodes,line)
+      lt.addLast(hiper_nodes,line['lon_lat'])
+      
        
    for wolf in lt.iterator(hash_table_per_wolf['table']):
       if wolf['key']!=None:
          for j in lt.iterator(quk.sort(wolf['value'],model.cmp_time)):
-               vertex=str(str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']+'_').replace('.','p').replace('-','m')+j['timestamp'])
-               gr.insertVertex(control,vertex)
-               lt.addLast(array_vertex,vertex)
+               vertex=str(str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']+'_').replace('.','p').replace('-','m'))
+               if not gr.containsVertex(control,vertex):
+                  j['vertex']=vertex
+                  gr.insertVertex(control,vertex)
+                  model.add_data(array_vertex,j)
+                  
 
-   for ver in range(0,len(array_vertex['elements'])-1):
-      s_list_1=array_vertex['elements'][ver].split('_')
-      s_list_2=array_vertex['elements'][ver+1].split('_')
-      gr.addEdge(control,array_vertex['elements'][ver],array_vertex['elements'][ver+1],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
+   for w in lt.iterator(array_vertex['table']):
+      if w['key']!=None:
+         for ver in range(0,len(w['value']['elements'])-1):
+            
+            s_list_1=w['value']['elements'][ver]['vertex'].split('_')
+            s_list_2=w['value']['elements'][ver+1]['vertex'].split('_')
+            gr.addEdge(control,w['value']['elements'][ver]['vertex'],w['value']['elements'][ver+1]['vertex'],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
 
+   hiper_nd= {x for x in hiper_nodes['elements'] if hiper_nodes['elements'].count(x) > 1}
 
-   for key in lt.iterator(hiper_nodes['table']):
-      if key['value']!=None:
-         if key['value']['size']>1:
-            hiper_n=str(key['key'][0]).replace('.','p').replace('-','m')+'_'+str(key['key'][1]).replace('.','p').replace('-','m')
-            gr.insertVertex(control,hiper_n)
-            for q in lt.iterator(array_vertex):
-               d_split=q.split('_')
-               if d_split[0]+'_'+d_split[1]==hiper_n:
-                  gr.addEdge(control,q,hiper_n,0)
-   return control,hash_table_per_wolf
+   for key in hiper_nd:
+      hiper_np=str(key[0]).replace('.','p').replace('-','m')+'_'+str(key[1]).replace('.','p').replace('-','m')
+      gr.insertVertex(control,hiper_np)
+      
+      for k in lt.iterator(array_vertex['table']):
+         if k['key']!=None:
+            for q in lt.iterator(k['value']):
+                  
+               d_split=q['vertex'].split('_')
+               if d_split[0]+'_'+d_split[1]==hiper_np:
+                  gr.addEdge(control,q['vertex'],hiper_np,0)
+   
+   #return control
+   return control, gr.numVertices(control)
+   
+
+   
 
 
 # Funciones de ordenamiento
@@ -214,8 +231,6 @@ def get_memory():
    toma una muestra de la memoria alocada en instante de tiempo
    """
    return tracemalloc.take_snapshot()
-
-
 
 
 def delta_memory(stop_memory, start_memory):
