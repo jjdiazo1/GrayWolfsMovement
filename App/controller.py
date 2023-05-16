@@ -59,23 +59,18 @@ def load_data(control):
    Carga los datos del reto
    """
    # TODO: Realizar la carga de datos
-   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-large.csv", encoding = "utf-8"), delimiter= ",")
+   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-small.csv", encoding = "utf-8"), delimiter= ",")
    hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING') 
    hiper_nodes=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
-   # hiper_nodes_list=lt.newList(datastructure='ARRAY_LIST')
    hiper_nodes_list=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    array_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    
-   
-  
    for line in raw_data:
       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
       line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
       model.add_data(hash_table_per_wolf,line)
       model.add_data_hiper_nodes(hiper_nodes,line)
-      
-      
-       
+             
    for wolf in lt.iterator(hash_table_per_wolf['table']):
       if wolf['key']!=None:
          for j in lt.iterator(quk.sort(wolf['value'],model.cmp_time)):
@@ -85,7 +80,6 @@ def load_data(control):
                   gr.insertVertex(control,vertex)
                   model.add_data(array_vertex,j)
                   
-
    for w in lt.iterator(array_vertex['table']):
       if w['key']!=None:
          for ver in range(0,len(w['value']['elements'])-1):
@@ -94,21 +88,6 @@ def load_data(control):
             s_list_2=w['value']['elements'][ver+1]['vertex'].split('_')
             gr.addEdge(control,w['value']['elements'][ver]['vertex'],w['value']['elements'][ver+1]['vertex'],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
    
-   # for i in lt.iterator(hiper_nodes['table']):
-   #    if i['key']!=None:
-   #       a=list(set(i['value']['elements']))
-   #       if len(a)>1:
-   #          for j in a:
-   #             if  j in hiper_nodes_list['elements'] and j not in hiper_nodes_list_r['elements']:
-   #                lt.addLast(hiper_nodes_list_r,j)
-   #             else:
-   #                lt.addLast(hiper_nodes_list,j)
-   #       else:
-   #          if  a[0] in hiper_nodes_list['elements'] and a[0] not in hiper_nodes_list_r['elements']:
-   #             lt.addLast(hiper_nodes_list_r,a[0])
-   #          else:
-   #             lt.addLast(hiper_nodes_list,a[0])
-
    for i in lt.iterator(hiper_nodes['table']):
       if i['key']!=None:
          a=list(set(i['value']['elements']))
@@ -130,12 +109,8 @@ def load_data(control):
                   d_split=q['vertex'].split('_')
                   if d_split[0]+'_'+d_split[1]==hiper_np:
                      gr.addEdge(control,q['vertex'],hiper_np,0)
-   return control, gr.numVertices(control)
-   #return control
-   #return control, gr.numVertices(control)
-   
 
-   
+   return control
 
 
 # Funciones de ordenamiento
