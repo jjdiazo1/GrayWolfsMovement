@@ -71,7 +71,7 @@ def load_data(control):
     '''
     Todo esta en el controller falta el print y eso pero la info esta alli, osea todo esta hehco solo falta mostrarlo
     '''
-    print(controller.load_data(control))
+    controller.load_data(control)
 
 
 def print_data(control, id):

@@ -64,7 +64,7 @@ def load_data(control):
    hiper_nodes=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    hiper_nodes_list=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    array_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
-   
+   five_first_last=lt.newList(datastructure='ARRAY_LIST')
    counter_wolfs=0
    for line in raw_data:
       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
@@ -107,6 +107,7 @@ def load_data(control):
       if key['key']!=None and key['value']['size']>1:
          counter_hiper_nodes+=1
          hiper_np=str(key['key'][0]).replace('.','p').replace('-','m')+'_'+str(key['key'][1]).replace('.','p').replace('-','m')
+         lt.addLast(five_first_last,hiper_np)
          gr.insertVertex(control,hiper_np)
          
          for k in lt.iterator(array_vertex['table']):
@@ -117,8 +118,10 @@ def load_data(control):
                   if d_split[0]+'_'+d_split[1]==hiper_np:
                      gr.addEdge(control,q['vertex'],hiper_np,0)
                      counter_hiper_nodes_edges+=1
+   
+   
 
-   return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes
+   return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes,five_first_last['elements'][:5]+five_first_last['elements'][-5:]
 
 
 # Funciones de ordenamiento
