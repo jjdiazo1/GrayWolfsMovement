@@ -65,11 +65,13 @@ def load_data(control):
    hiper_nodes_list=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    array_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    
+   counter_wolfs=0
    for line in raw_data:
       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
       line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
       model.add_data(hash_table_per_wolf,line)
       model.add_data_hiper_nodes(hiper_nodes,line)
+      counter_wolfs+=1
              
    for wolf in lt.iterator(hash_table_per_wolf['table']):
       if wolf['key']!=None:
@@ -97,8 +99,11 @@ def load_data(control):
          else:
             model.add_data_special(hiper_nodes_list,a[0])
 
+   counter_hiper_nodes=0
+   counter_hiper_nodes_edges=0
    for key in lt.iterator(hiper_nodes_list['table']):
       if key['key']!=None and key['value']['size']>1:
+         counter_hiper_nodes+=1
          hiper_np=str(key['key'][0]).replace('.','p').replace('-','m')+'_'+str(key['key'][1]).replace('.','p').replace('-','m')
          gr.insertVertex(control,hiper_np)
          
@@ -109,8 +114,9 @@ def load_data(control):
                   d_split=q['vertex'].split('_')
                   if d_split[0]+'_'+d_split[1]==hiper_np:
                      gr.addEdge(control,q['vertex'],hiper_np,0)
+                     counter_hiper_nodes_edges+=1
 
-   return control
+   return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges
 
 
 # Funciones de ordenamiento
