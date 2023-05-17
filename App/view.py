@@ -83,7 +83,10 @@ def print_req_1(control):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    
+    '''
+    Todo esta en el controller falta el print y eso pero la info esta alli
+    '''
 
 
 def print_req_2(control):
