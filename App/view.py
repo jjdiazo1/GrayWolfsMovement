@@ -68,6 +68,9 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
+    '''
+    Todo esta en el controller falta el print y eso pero la info esta alli, osea todo esta hehco solo falta mostrarlo
+    '''
     print(controller.load_data(control))
 
 
@@ -84,9 +87,7 @@ def print_req_1(control):
     """
     # TODO: Imprimir el resultado del requerimiento 1
     
-    '''
-    Todo esta en el controller falta el print y eso pero la info esta alli
-    '''
+
 
 
 def print_req_2(control):
