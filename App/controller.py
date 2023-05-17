@@ -72,12 +72,14 @@ def load_data(control):
       model.add_data(hash_table_per_wolf,line)
       model.add_data_hiper_nodes(hiper_nodes,line)
       counter_wolfs+=1
-             
+
+   counter_follow_nodes=0        
    for wolf in lt.iterator(hash_table_per_wolf['table']):
       if wolf['key']!=None:
          for j in lt.iterator(quk.sort(wolf['value'],model.cmp_time)):
                vertex=str(str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']+'_').replace('.','p').replace('-','m'))
                if not gr.containsVertex(control,vertex):
+                  counter_follow_nodes+=1
                   j['vertex']=vertex
                   gr.insertVertex(control,vertex)
                   model.add_data(array_vertex,j)
@@ -116,7 +118,7 @@ def load_data(control):
                      gr.addEdge(control,q['vertex'],hiper_np,0)
                      counter_hiper_nodes_edges+=1
 
-   return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges
+   return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes
 
 
 # Funciones de ordenamiento
