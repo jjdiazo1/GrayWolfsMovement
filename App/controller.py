@@ -121,8 +121,7 @@ def load_data(control):
                   d_split=q['vertex'].split('_')
                   if d_split[0]+'_'+d_split[1]==hiper_np:
                      gr.addEdge(control,q['vertex'],hiper_np,0)
-                     gr.addEdge(control,hiper_np,q['vertex'],0)
-                     counter_hiper_nodes_edges+=2
+                     counter_hiper_nodes_edges+=1
    return counter_hiper_nodes_edges
    #return gr.numVertices(control),counter_hiper_nodes_edges, counter_hiper_nodes,counter_follow_nodes
 
