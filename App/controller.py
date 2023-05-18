@@ -89,11 +89,13 @@ def load_data(control):
    for w in lt.iterator(hash_table_per_wolf['table']):
       if w['key']!=None:
          for ver in range(0,len(w['value']['elements'])-1):
-   
-            s_list_1=w['value']['elements'][ver]['vertex'].split('_')
-            s_list_2=w['value']['elements'][ver+1]['vertex'].split('_')
-            counter_nodes_edges+=1
-            gr.addEdge(control,w['value']['elements'][ver]['vertex'],w['value']['elements'][ver+1]['vertex'],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
+            a=w['value']['elements'][ver]['vertex']
+            b=w['value']['elements'][ver+1]['vertex']
+            if a!=b:
+               s_list_1=a.split('_')
+               s_list_2=b.split('_')
+               counter_nodes_edges+=1
+               gr.addEdge(control,a,b,model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
 
    for i in lt.iterator(hiper_nodes['table']):
       if i['key']!=None:
