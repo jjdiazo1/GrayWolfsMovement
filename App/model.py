@@ -57,8 +57,7 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 # Construccion de modelos
 '''
 "ADJ_LIST"
-    "ADJ_MTX": ".adjlist",
-
+"ADJ_MTX": ".adjlist"
 '''
 def new_data_structs():
     """
@@ -66,7 +65,7 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    return gr.newGraph(datastructure="ADJ_MTX")
+    return gr.newGraph(datastructure="ADJ_MTX",directed=False)
 
 
 # Funciones para agregar informacion al modelo
@@ -77,12 +76,12 @@ def add_data(hash_table_per_wolf,data):
     """
     #TODO: Crear la función para agregar elementos a una lista
 
-    if mp.contains(hash_table_per_wolf,data['individual-local-identifier']):
-        lt.addLast(mp.get(hash_table_per_wolf,data['individual-local-identifier'])['value'],data)
+    if mp.contains(hash_table_per_wolf,data['individual-id']):
+        lt.addLast(mp.get(hash_table_per_wolf,data['individual-id'])['value'],data)
     else:
         value=lt.newList(datastructure='ARRAY_LIST')
         lt.addLast(value,data)
-        mp.put(hash_table_per_wolf,data['individual-local-identifier'],value)
+        mp.put(hash_table_per_wolf,data['individual-id'],value)
     return hash_table_per_wolf
 
 def add_data_hiper_nodes(hash_table_per_wolf,data):
@@ -91,12 +90,12 @@ def add_data_hiper_nodes(hash_table_per_wolf,data):
     """
     #TODO: Crear la función para agregar elementos a una lista
 
-    if mp.contains(hash_table_per_wolf,data['individual-local-identifier']):
-        lt.addLast(mp.get(hash_table_per_wolf,data['individual-local-identifier'])['value'],data['lon_lat'])
+    if mp.contains(hash_table_per_wolf,data['individual-id']):
+        lt.addLast(mp.get(hash_table_per_wolf,data['individual-id'])['value'],data['lon_lat'])
     else:
         value=lt.newList(datastructure='ARRAY_LIST')
         lt.addLast(value,data['lon_lat'])
-        mp.put(hash_table_per_wolf,data['individual-local-identifier'],value)
+        mp.put(hash_table_per_wolf,data['individual-id'],value)
     return hash_table_per_wolf
 
 def add_data_special(hash_table_per_wolf,data):

@@ -68,7 +68,10 @@ def load_data(control):
    counter_wolfs=0
    for line in raw_data:
       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
-      line['lon_lat']=(round(float(line['location-long']),4),round(float(line['location-lat']),4))
+      line['lon_lat']=(round(float(line['location-long']),3),round(float(line['location-lat']),3))
+      line['individual-id']=line['individual-local-identifier']+'_'+line['tag-local-identifier']
+
+      line['vertex']=str(str(str(line['lon_lat'][0])+'_'+str(line['lon_lat'][1])+'_'+line['individual-id']).replace('.','p').replace('-','m'))
       model.add_data(hash_table_per_wolf,line)
       model.add_data_hiper_nodes(hiper_nodes,line)
       counter_wolfs+=1
@@ -76,22 +79,22 @@ def load_data(control):
    counter_follow_nodes=0        
    for wolf in lt.iterator(hash_table_per_wolf['table']):
       if wolf['key']!=None:
-         for j in lt.iterator(quk.sort(wolf['value'],model.cmp_time)):
-               vertex=str(str(str(j['lon_lat'][0])+'_'+str(j['lon_lat'][1])+'_'+j['individual-local-identifier']+'_').replace('.','p').replace('-','m'))
-               if not gr.containsVertex(control,vertex):
+         wolf['value']=quk.sort(wolf['value'],model.cmp_time)
+         for j in lt.iterator(wolf['value']):
+               if not gr.containsVertex(control,j['vertex']):
                   counter_follow_nodes+=1
-                  j['vertex']=vertex
-                  gr.insertVertex(control,vertex)
+                  gr.insertVertex(control,j['vertex'])
                   model.add_data(array_vertex,j)
-                  
-   for w in lt.iterator(array_vertex['table']):
+   counter_nodes_edges =0                
+   for w in lt.iterator(hash_table_per_wolf['table']):
       if w['key']!=None:
          for ver in range(0,len(w['value']['elements'])-1):
-            
+   
             s_list_1=w['value']['elements'][ver]['vertex'].split('_')
             s_list_2=w['value']['elements'][ver+1]['vertex'].split('_')
+            counter_nodes_edges+=1
             gr.addEdge(control,w['value']['elements'][ver]['vertex'],w['value']['elements'][ver+1]['vertex'],model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
-   
+
    for i in lt.iterator(hiper_nodes['table']):
       if i['key']!=None:
          a=list(set(i['value']['elements']))
@@ -106,22 +109,21 @@ def load_data(control):
    for key in lt.iterator(hiper_nodes_list['table']):
       if key['key']!=None and key['value']['size']>1:
          counter_hiper_nodes+=1
-         hiper_np=str(key['key'][0]).replace('.','p').replace('-','m')+'_'+str(key['key'][1]).replace('.','p').replace('-','m')
+         hiper_np=str(str(key['key'][0])+'_'+str(key['key'][1])).replace('.','p').replace('-','m')
          lt.addLast(five_first_last,hiper_np)
          gr.insertVertex(control,hiper_np)
          
          for k in lt.iterator(array_vertex['table']):
             if k['key']!=None:
-               for q in lt.iterator(k['value']):
-                     
+               for q in lt.iterator(k['value']):         
                   d_split=q['vertex'].split('_')
                   if d_split[0]+'_'+d_split[1]==hiper_np:
                      gr.addEdge(control,q['vertex'],hiper_np,0)
                      counter_hiper_nodes_edges+=1
-   
-   
+   return control, gr.numVertices(control)
+   #return gr.numVertices(control),counter_hiper_nodes_edges, counter_hiper_nodes,counter_follow_nodes
 
-   return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes,five_first_last['elements'][:5]+five_first_last['elements'][-5:]
+   #return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes,five_first_last['elements'][:5]+five_first_last['elements'][-5:]
 
 
 # Funciones de ordenamiento
