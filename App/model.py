@@ -121,32 +121,13 @@ def new_data(id, info):
     #TODO: Crear la función para estructurar los datos
     pass
 
-
-# Funciones de consulta
-
-def get_data(data_structs, id):
-    """
-    Retorna un dato a partir de su ID
-    """
-    #TODO: Crear la función para obtener un dato de una lista
-    pass
-
-
-def data_size(data_structs):
-    """
-    Retorna el tamaño de la lista de datos
-    """
-    #TODO: Crear la función para obtener el tamaño de una lista
-    pass
-
-
 def req_1(data_structs):
     """
     Función que soluciona el requerimiento 1
     """
     # TODO: Realizar el requerimiento 1
-    pass
-
+    return bf.pathTo(data_structs,'m111p862_57p449')
+    #return djk.pathTo(data_structs,'m111p439_56p912_13792_13792')
 
 def req_2(data_structs):
     """
