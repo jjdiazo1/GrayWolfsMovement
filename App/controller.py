@@ -96,7 +96,7 @@ def load_data(control):
                s_list_2=b.split('_')
                counter_nodes_edges+=1
                gr.addEdge(control,a,b,model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
-
+               
    for i in lt.iterator(hiper_nodes['table']):
       if i['key']!=None:
          a=list(set(i['value']['elements']))
@@ -124,7 +124,7 @@ def load_data(control):
                      gr.addEdge(control,hiper_np,q['vertex'],0)
                      counter_hiper_nodes_edges+=2
    #return gr.numVertices(control),gr.numEdges(control)
-   return control,gr.numEdges(control)
+   return control
    #return gr.numVertices(control),counter_hiper_nodes_edges, counter_hiper_nodes,counter_follow_nodes
 
    #return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes,five_first_last['elements'][:5]+five_first_last['elements'][-5:]

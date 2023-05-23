@@ -126,7 +126,9 @@ def req_1(data_structs):
     Función que soluciona el requerimiento 1
     """
     # TODO: Realizar el requerimiento 1
-    return bf.pathTo(data_structs,'m111p862_57p449')
+    hola= bfs.BreadhtFisrtSearch(data_structs,"m111p862_57p449")
+    
+    return bfs.hasPathTo(hola,"m111p908_57p427")
     #return djk.pathTo(data_structs,'m111p439_56p912_13792_13792')
 
 def req_2(data_structs):
