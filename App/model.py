@@ -199,9 +199,9 @@ def req_3(data_structs):
     # TODO: Realizar el requerimiento 3
     
     sccmap, sc = kosaraju(data_structs) #Aca ya tenemos el sccmap en el que estan los IDCC con sus respectivas componentes
-    oficial = top_5_scc(sccmap) #Y aca el top 5 de los IDCC que mas componentes tienen.
+    top_5_IDCC = top_5_scc(sccmap) #Y aca el top 5 de los IDCC que mas componentes tienen.
     
-    llaves = mp.keySet(oficial)
+    llaves = mp.keySet(top_5_IDCC)
     dataframe = lt.newList("ARRAY_LIST")
     
     #Este ciclo solo se hara 5 veces, por el top 5
@@ -209,7 +209,7 @@ def req_3(data_structs):
         longitudes = lt.newList("ARRAY_LIST")
         latitudes = lt.newList("ARRAY_LIST")
         wolfs_id = lt.newList("ARRAY_LIST")
-        entry = mp.get(oficial, key2)
+        entry = mp.get(top_5_IDCC, key2)
         lista = me.getValue(entry)
         
         for node in lt.iterator(lista):
@@ -270,6 +270,7 @@ def req_3(data_structs):
         lt.addLast(dataframe, [idscc, nodes, key2, min_lat, max_lat, \
             min_long, max_long, wolf_count, lista_lobos_tabulada])
     return dataframe
+
 def kosaraju(data_structs):
     
     """Genera el mapa de componentes fuertemente conectadas
@@ -302,20 +303,20 @@ def top_5_scc(sccmap):
     
     lista_cc = lt.newList("ARRAY_LIST")
     size_list = lt.newList("ARRAY_LIST")
-    ofcval = mp.newMap(maptype="PROBING")
-    oficial = mp.newMap(maptype="PROBING")
+    scc_val = mp.newMap(maptype="PROBING")
+    top_5_scc = mp.newMap(maptype="PROBING")
     for key1 in lt.iterator(mp.keySet(sccmap)):
         lt.addLast(lista_cc, key1)
         entry = mp.get(sccmap, key1)
         lst = me.getValue(entry)
         size = lt.size(lst)
         lt.addLast(size_list, size)
-        mp.put(ofcval, size, lst)
+        mp.put(scc_val, size, lst)
     size_list = sorted(size_list["elements"], reverse=True)
     for i in range(0, 5):
-        mp.put(oficial, size_list[i], me.getValue(mp.get(ofcval, size_list[i])))
-    
-    return oficial
+        mp.put(top_5_scc, size_list[i], me.getValue(mp.get(scc_val, size_list[i])))
+    return top_5_scc
+
 def extract_info(code):
     
     """Esta funcion va a extraer la informacion de los codigos de los lobos
