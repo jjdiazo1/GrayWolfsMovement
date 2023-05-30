@@ -102,12 +102,19 @@ def add_data_special(hash_table_per_wolf,data):
         mp.put(hash_table_per_wolf,data,value)
     return hash_table_per_wolf
 # Funciones para creacion de datos
-def new_data(id, info):
+def add_data_new_graph(hash_table_per_wolf,data):
     """
-    Crea una nueva estructura para modelar los datos
+    Función para agregar nuevos elementos a la lista
     """
-    #TODO: Crear la función para estructurar los datos
-    pass
+    #TODO: Crear la función para agregar elementos a una lista
+
+    if mp.contains(hash_table_per_wolf,str(data['value'])):
+        lt.addLast(mp.get(hash_table_per_wolf,str(data['value']))['value'],data['key'])
+    else:
+        value=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(value,data['key'])
+        mp.put(hash_table_per_wolf,str(data['value']),value)
+    return hash_table_per_wolf
 def req_1(data_structs,origen,destino):
     """
     Función que soluciona el requerimiento 1
