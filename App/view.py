@@ -154,7 +154,21 @@ def print_req_4(control):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    
+    origen = tuple(float(coord[1:-1]) for coord in input("Ingrese la latitud y longitud del punto de origen de la forma (lon,lat): ").split(','))
+    destino = tuple(float(coord[1:-1]) for coord in input("Ingrese la latitud y longitud del punto de destino (lon,lat): ").split(','))
+    print('\n')
+    b=controller.req_4(control,origen,destino)  
+    print("Distancia entre el punto GPS de origen y el punto de encuentro más cercano:",b[0])
+    print("Distancia entre el punto de encuentro de destino y el punto GPS de destino:",b[1])
+    print("Distancia total del recorrido entre los puntos de encuentro de origen y destino:",b[2])
+    print("Total de puntos de encuentro en el camino identificado:",b[3])
+    print("Total de individuos/lobos distintos que utilizan el corredor identificado:",b[4])
+    print("Total de segmentos que conforman la ruta identificada:",b[5])
+    print('\n')
+
+    headers=["Identificador punto de encuentro","Longitud","Latitud", "# lobos que transitan por ese punto", "FISRT_LAST_THREE" ,"Distancia al siguiente punto de encuentro"]
+    print(tabulate(b[6],headers,tablefmt='grid',stralign='center',maxheadercolwidths=15,maxcolwidths=15))
 
 
 def print_req_5(control):
