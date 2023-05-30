@@ -191,7 +191,12 @@ def req_2(data_structs,origen,destino):
             if i<3 or (i<= lt.size(lobos_adj) and i>=lt.size(lobos_adj)-3):
                 lt.addLast(lista_lobos,j)
             i+=1
-        dicci={"id":ide,"longitud":lon,"latitud":lat,"numero individuos":num_ind,"lobos":lista_lobos,"distancia al siguiente vértice":edge,"siguiente vértice":e["vertexB"]}
+
+        lista_lista_lobos=lt.newList(datastructure='ARRAY_LIST')
+        for k in lt.iterator(lista_lobos):
+            lt.addLast(lista_lista_lobos,k)
+
+        dicci={"id":ide,"longitud":lon,"latitud":lat,"numero individuos":num_ind,"lobos":set(lista_lista_lobos['elements'][:3]+lista_lista_lobos['elements'][-3:]),"distancia al siguiente vértice":edge,"siguiente vértice":e["vertexB"]}
         if edge !=0:
             total_seg+=1
         else:
