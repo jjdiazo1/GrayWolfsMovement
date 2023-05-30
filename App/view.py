@@ -123,6 +123,7 @@ def print_req_1(control):
     print("El total de nodos de seguimiento que tiene el camino encontrado.",final[2])
     headers=["id","longitud","latitud","numero individuos","lobos","distancia al siguiente vértice","siguiente vértice"]
     lista=[]
+    print(final[3]['size'])
     for i in lt.iterator(final[3]):
         print(i)
 
