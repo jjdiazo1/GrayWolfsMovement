@@ -439,12 +439,90 @@ def lista_lobos_fix(lista_lobos):
 
     return lista_lobos
     
-def req_4(data_structs):
+def req_4(data_structs,lon_lat_1,lon_lat_2):
     """
     Función que soluciona el requerimiento 4
     """
     # TODO: Realizar el requerimiento 4
-    pass
+
+    lon_lat_1_list=lt.newList(datastructure='ARRAY_LIST')
+    lon_lat_2_list=lt.newList(datastructure='ARRAY_LIST')
+
+    for i in lt.iterator(data_structs['list_hiper_nodes']):
+        lt.addLast(lon_lat_1_list,(i,haversine_equation(i[0],i[1],lon_lat_1[0],lon_lat_1[1])))
+        lt.addLast(lon_lat_2_list,(i,haversine_equation(i[0],i[1],lon_lat_2[0],lon_lat_2[1])))
+
+    lon_lat_1_nearest=lt.firstElement(quk.sort(lon_lat_1_list,cmp_harvesine))
+    lon_lat_2_nearest=lt.firstElement(quk.sort(lon_lat_2_list,cmp_harvesine))
+    
+    lon_lat_1_nearest_converted=str(str(lon_lat_1_nearest[0][0])+'_'+str(lon_lat_1_nearest[0][1])).replace('.','p').replace('-','m')
+    lon_lat_2_nearest_converted=str(str(lon_lat_2_nearest[0][0])+'_'+str(lon_lat_2_nearest[0][1])).replace('.','p').replace('-','m')
+  
+    graph_search=djk.Dijkstra(data_structs['graph'],lon_lat_1_nearest_converted)
+    total_weight=djk.distTo(graph_search,lon_lat_2_nearest_converted)
+    list_vertices_path=lt.newList(datastructure='ARRAY_LIST')
+    
+    for j in lt.iterator(djk.pathTo(graph_search,lon_lat_2_nearest_converted)):
+        lt.addLast(list_vertices_path,j)
+
+    hiper_nodes_route=lt.newList(datastructure='ARRAY_LIST')
+    number_nodes_individuals=lt.newList(datastructure='ARRAY_LIST')
+    for k in lt.iterator(list_vertices_path):
+        vertex_A=k['vertexA'].split('_')
+        vertex_B=k['vertexB'].split('_')
+
+        if k['weight']==0 and len(vertex_A)==2:
+                lt.addLast(hiper_nodes_route,k['vertexA'])
+        else:
+            if len(vertex_A)==6:
+                lt.addLast(number_nodes_individuals,vertex_A[2]+'_'+vertex_A[3]+'_'+vertex_A[4]+'_'+vertex_A[5])
+            elif len(vertex_A)==5:
+                lt.addLast(number_nodes_individuals,vertex_A[2]+'_'+vertex_A[3]+'_'+vertex_A[4])
+            else:
+                lt.addLast(number_nodes_individuals,vertex_A[2]+'_'+vertex_A[3])    
+
+        if k['weight']==0 and len(vertex_B)==2:
+                lt.addLast(hiper_nodes_route,k['vertexB'])      
+        else:
+            if len(vertex_B)==6:
+                lt.addLast(number_nodes_individuals,vertex_B[2]+'_'+vertex_B[3]+'_'+vertex_B[4]+'_'+vertex_B[5])
+            elif len(vertex_B)==5:
+                lt.addLast(number_nodes_individuals,vertex_B[2]+'_'+vertex_B[3]+'_'+vertex_B[4])
+            else:
+                lt.addLast(number_nodes_individuals,vertex_B[2]+'_'+vertex_B[3])    
+
+           
+    hiper_nodes_route=list(set(hiper_nodes_route['elements']))
+    number_nodes_individuals=len(set(number_nodes_individuals['elements']))
+    total_segments=(list_vertices_path['size'])-1
+    
+    list_3_first_last=lt.newList(datastructure='ARRAY_LIST')
+
+    for i in set(hiper_nodes_route[:3]+hiper_nodes_route[-3:]):
+        row=lt.newList(datastructure='ARRAY_LIST')
+        list_adjacents_size=gr.adjacents(data_structs['graph'],i)
+        adjacents_array=lt.newList(datastructure='ARRAY_LIST')
+        coordinates=i.split('_')
+        lon=float(coordinates[0].replace('m','-').replace('p','.'))
+        lati=float(coordinates[1].replace('m','-').replace('p','.'))
+
+        for j in lt.iterator(list_adjacents_size):
+            lt.addLast(adjacents_array,j)
+        lt.addLast(row,i)
+        lt.addLast(row,lon)
+        lt.addLast(row,lati)
+        lt.addLast(row,list_adjacents_size['size'])
+        lt.addLast(row,adjacents_array['elements'])
+        
+        list_hiper_node_nearest=lt.newList(datastructure='ARRAY_LIST')
+        for o in lt.iterator(data_structs['list_hiper_nodes']):
+            lt.addLast(list_hiper_node_nearest,(o,haversine_equation(o[0],o[1],lon,lati)))
+
+        list_hiper_node_nearest=quk.sort(list_hiper_node_nearest,cmp_harvesine)['elements'][1]
+        lt.addLast(row,list_hiper_node_nearest[1])
+        lt.addLast(list_3_first_last,row['elements'])
+    
+    return lon_lat_1_nearest[1], lon_lat_2_nearest[1], total_weight, len(hiper_nodes_route), number_nodes_individuals,total_segments,list_3_first_last['elements']
 
 
 def req_5(data_structs,origen,distancia,numero):
