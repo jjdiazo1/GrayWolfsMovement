@@ -639,3 +639,20 @@ def cmp_lon_lat(data_1,data_2):
 
 def cmp_harvesine(data_1,data_2):
     return data_1[1]<=data_2[1]
+def nua(lista):
+    hiper_nodes_sub_list=lt.newList(datastructure='ARRAY_LIST')
+    herd_members=lt.newList(datastructure='ARRAY_LIST')
+    for q in lt.iterator(lista):
+        qua=q.split('_')
+
+        if len(qua)==2:
+            lt.addLast(hiper_nodes_sub_list,q)
+        if len(qua)>2:
+            if len(qua)==6:
+                lt.addLast(herd_members,qua[2]+'_'+qua[3]+'_'+qua[4]+'_'+qua[5])
+            elif len(qua)==5:
+                lt.addLast(herd_members,qua[2]+'_'+qua[3]+'_'+qua[4])
+            else:
+                lt.addLast(herd_members,qua[2]+'_'+qua[3])    
+    return hiper_nodes_sub_list,herd_members
+
