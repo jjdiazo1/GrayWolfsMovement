@@ -52,8 +52,6 @@ def new_controller():
 
 
 # Funciones para la carga de datos
-
-
 def load_data(control):
    """
    Carga los datos del reto
@@ -61,15 +59,18 @@ def load_data(control):
    # TODO: Realizar la carga de datos
    raw_data_2=csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-individuals-utf8-large.csv", encoding = "utf-8"), delimiter= ",")
    list_individual_wolfs=lt.newList(datastructure='ARRAY_LIST')
-   for line in raw_data_2:
-      lt.addLast(list_individual_wolfs,line)
+   for l in raw_data_2:
+      l['individual-id']=l['animal-id']+'_'+l['tag-id']
+      lt.addLast(list_individual_wolfs,l)
 
    raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-small.csv", encoding = "utf-8"), delimiter= ",")
    hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING') 
    hiper_nodes=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    hiper_nodes_list=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
-   array_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+   array_vertex=lt.newList(datastructure='ARRAY_LIST')
    five_first_last=lt.newList(datastructure='ARRAY_LIST')
+   hash_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+
    counter_wolfs=0
    for line in raw_data:
       line['time_datetime']=datetime.strptime(line['timestamp'],'%Y-%m-%d %H:%M')
@@ -86,10 +87,12 @@ def load_data(control):
       if wolf['key']!=None:
          wolf['value']=quk.sort(wolf['value'],model.cmp_time)
          for j in lt.iterator(wolf['value']):
-               if not gr.containsVertex(control,j['vertex']):
+               if not gr.containsVertex(control['graph'],j['vertex']):
+                  model.add_data(hash_vertex,j)
                   counter_follow_nodes+=1
-                  gr.insertVertex(control,j['vertex'])
-                  model.add_data(array_vertex,j)
+                  gr.insertVertex(control['graph'],j['vertex'])
+                  #model.add_data(array_vertex,j)
+                  lt.addLast(array_vertex,j['vertex'])
    counter_nodes_edges =0                
    for w in lt.iterator(hash_table_per_wolf['table']):
       if w['key']!=None:
@@ -100,7 +103,7 @@ def load_data(control):
                s_list_1=a.split('_')
                s_list_2=b.split('_')
                counter_nodes_edges+=1
-               gr.addEdge(control,a,b,model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
+               gr.addEdge(control['graph'],a,b,model.haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
                
    for i in lt.iterator(hiper_nodes['table']):
       if i['key']!=None:
@@ -111,28 +114,31 @@ def load_data(control):
          else:
             model.add_data_special(hiper_nodes_list,a[0])
 
+   hiper_nodes_df_lt=lt.newList(datastructure='ARRAY_LIST')
    counter_hiper_nodes=0
    counter_hiper_nodes_edges=0
    for key in lt.iterator(hiper_nodes_list['table']):
       if key['key']!=None and key['value']['size']>1:
+         lt.addLast(hiper_nodes_df_lt,key['key'])
          counter_hiper_nodes+=1
          hiper_np=str(str(key['key'][0])+'_'+str(key['key'][1])).replace('.','p').replace('-','m')
          lt.addLast(five_first_last,hiper_np)
-         gr.insertVertex(control,hiper_np)
+         gr.insertVertex(control['graph'],hiper_np)
          
-         for k in lt.iterator(array_vertex['table']):
-            if k['key']!=None:
-               for q in lt.iterator(k['value']):         
-                  d_split=q['vertex'].split('_')
-                  if d_split[0]+'_'+d_split[1]==hiper_np:
-                     gr.addEdge(control,q['vertex'],hiper_np,0)
-                     gr.addEdge(control,hiper_np,q['vertex'],0)
-                     counter_hiper_nodes_edges+=2
-   #return gr.numVertices(control),gr.numEdges(control)
-   return control, list_individual_wolfs
-   #return gr.numVertices(control),counter_hiper_nodes_edges, counter_hiper_nodes,counter_follow_nodes
+         for k in lt.iterator(array_vertex):       
+            d_split=k.split('_')
+            if d_split[0]+'_'+d_split[1]==hiper_np:
+               gr.addEdge(control['graph'],k,hiper_np,0)
+               gr.addEdge(control['graph'],hiper_np,k,0)
+               counter_hiper_nodes_edges+=2
+   control['list_individuals']=list_individual_wolfs
+   control['hash_table_ocurrence']=hash_table_per_wolf
+   control['list_hiper_nodes']=hiper_nodes_df_lt
+   control['hash_vertex']=hash_vertex
+  
+   return control, counter_hiper_nodes,counter_hiper_nodes_edges
+   
 
-   #return control,hash_table_per_wolf,gr.numVertices(control),counter_hiper_nodes,counter_wolfs,control['edges'],counter_hiper_nodes_edges,counter_follow_nodes,five_first_last['elements'][:5]+five_first_last['elements'][-5:]
 
 
 # Funciones de ordenamiento
@@ -175,8 +181,8 @@ def req_3(control):
    """
    Retorna el resultado del requerimiento 3
    """
-   # TODO: Modificar el requerimiento 3
-   pass
+   return model.req_3(control)
+   
 
 
 
