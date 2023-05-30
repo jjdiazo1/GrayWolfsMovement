@@ -199,8 +199,6 @@ def req_2(data_structs,origen,destino):
         if contador <5 or (contador <= size and contador>=size-5):
             st.push(salida,dicci)
         contador+=1
-    for x in lt.iterator(salida):
-        print(x)
     tupla=(dist,total_enc,total_seg,salida)
     return tupla
 def req_3(data_structs):
