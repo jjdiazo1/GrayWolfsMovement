@@ -679,3 +679,32 @@ def haversine_equation(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a)) 
     r = 6371
     return c * r
+def first_3_last_3(data_structs,lista):
+    list_=lt.newList(datastructure='ARRAY_LIST')
+    for p in set(lista[:3]+lista[-3:]):
+        row=lt.newList(datastructure='ARRAY_LIST')
+        list_adjacents_size=gr.adjacents(data_structs['graph'],p)
+        adjacents_array=lt.newList(datastructure='ARRAY_LIST')
+        coordinates=p.split('_')
+        lon=float(coordinates[0].replace('m','-').replace('p','.'))
+        lati=float(coordinates[1].replace('m','-').replace('p','.'))
+
+        for j in lt.iterator(list_adjacents_size):
+            lt.addLast(adjacents_array,j)
+        
+        lt.addLast(row,p)
+        lt.addLast(row,lon)
+        lt.addLast(row,lati)
+        lt.addLast(row,list_adjacents_size['size'])
+        lt.addLast(row,adjacents_array['elements'])
+        lt.addLast(list_,row['elements'])
+    return list_['elements']
+
+def cmp_hash_table(data_1,data_2):
+    return data_1['value']['size']>=data_2['value']['size']
+
+def cmp_lon_lat(data_1,data_2):
+    return data_1<=data_2
+
+def cmp_harvesine(data_1,data_2):
+    return data_1[1]<=data_2[1]
