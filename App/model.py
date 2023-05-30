@@ -102,12 +102,19 @@ def add_data_special(hash_table_per_wolf,data):
         mp.put(hash_table_per_wolf,data,value)
     return hash_table_per_wolf
 # Funciones para creacion de datos
-def new_data(id, info):
+def add_data_new_graph(hash_table_per_wolf,data):
     """
-    Crea una nueva estructura para modelar los datos
+    Función para agregar nuevos elementos a la lista
     """
-    #TODO: Crear la función para estructurar los datos
-    pass
+    #TODO: Crear la función para agregar elementos a una lista
+
+    if mp.contains(hash_table_per_wolf,str(data['value'])):
+        lt.addLast(mp.get(hash_table_per_wolf,str(data['value']))['value'],data['key'])
+    else:
+        value=lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(value,data['key'])
+        mp.put(hash_table_per_wolf,str(data['value']),value)
+    return hash_table_per_wolf
 def req_1(data_structs,origen,destino):
     """
     Función que soluciona el requerimiento 1
@@ -139,7 +146,11 @@ def req_1(data_structs,origen,destino):
             if e<3 or (e<= lt.size(lobos_adj) and e>=lt.size(lobos_adj)-3):
                 lt.addLast(lista_lobos,j)
             e+=1
-        dicci={"id":ide,"longitud":lon,"latitud":lat,"numero individuos":num_ind,"lobos":lista_lobos,"distancia al siguiente vértice":edge,"siguiente vértice":nodo2}
+        lista_lista_lobos=lt.newList(datastructure='ARRAY_LIST')
+        for i in lt.iterator(lista_lobos):
+            lt.addLast(lista_lista_lobos,i)
+
+        dicci={"id":ide,"longitud":lon,"latitud":lat,"numero individuos":num_ind,"lobos":set(lista_lista_lobos['elements'][:3]+lista_lista_lobos['elements'][-3:]),"distancia al siguiente vértice":edge,"siguiente vértice":nodo2}
         if edge !=0:
             total_seg+=1
         else:
@@ -609,12 +620,146 @@ def req_6(data_structs,init_date,end_date,animal_sex):
     
     return list_individual_short_char['elements'][0],shortest_path[1],len(hiper_nodes_route_shortest),path_shortest_size,list_3_first_last_shortest,list_individual_large_char['elements'][0],larger_path[1],len(hiper_nodes_route_larger),path_larger_size,list_3_first_last_larger
     
-def req_7(data_structs):
+def req_7(data_structs,init_date,end_date,temp_min,temp_max):
     """
     Función que soluciona el requerimiento 7
     """
     # TODO: Realizar el requerimiento 7
-    pass
+
+    new_graph=gr.newGraph(datastructure="ADJ_LIST",directed=True)
+    init_date=datetime.strptime(init_date,'%Y-%m-%d %H:%M')
+    end_date=datetime.strptime(end_date,'%Y-%m-%d %H:%M')
+    list_individual_id_selected=lt.newList(datastructure='ARRAY_LIST')
+    hash_table_filtered=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+    hiper_nodes=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+    hiper_nodes_list=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+    array_vertex=lt.newList(datastructure='ARRAY_LIST')
+    components=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+    list_components=lt.newList(datastructure='ARRAY_LIST')
+
+    for i in lt.iterator(data_structs['list_individuals']):
+        if len(i['deploy-on-date'])!=0:
+            if datetime.strptime(i['deploy-on-date'],'%Y-%m-%d %H:%M')>=init_date:
+                if len(i['deploy-off-date'])==0 or datetime.strptime(i['deploy-off-date'],'%Y-%m-%d %H:%M')<=end_date:
+                    lt.addLast(list_individual_id_selected,i['individual-id'])
+        else:
+            lt.addLast(list_individual_id_selected,i['individual-id'])
+    
+    for j in lt.iterator(data_structs['hash_table_ocurrence']['table']):
+        if j['key']!=None and j['key'] in list_individual_id_selected['elements']:
+            for k in lt.iterator(j['value']):
+                if temp_min<=k['external-temperature']<=temp_max and init_date<=k['time_datetime']<=end_date:
+                    add_data(hash_table_filtered,k)
+                    add_data_hiper_nodes(hiper_nodes,k)
+                    if not gr.containsVertex(new_graph,k['vertex']):
+                        gr.insertVertex(new_graph,k['vertex'])
+                        lt.addLast(array_vertex,k['vertex'])
+    for w in lt.iterator(hash_table_filtered['table']):
+        if w['key']!=None:
+            for ver in range(0,len(w['value']['elements'])-1):
+                a=w['value']['elements'][ver]['vertex']
+                b=w['value']['elements'][ver+1]['vertex']
+                if a!=b:
+                    s_list_1=a.split('_')
+                    s_list_2=b.split('_')
+                    gr.addEdge(new_graph,a,b,haversine_equation(float(s_list_1[0].replace('m','-').replace('p','.')),float(s_list_1[1].replace('m','-').replace('p','.')),float(s_list_2[0].replace('m','-').replace('p','.')),float(s_list_2[1].replace('m','-').replace('p','.'))))
+
+    for r in lt.iterator(hiper_nodes['table']):
+        if r['key']!=None:
+            a=list(set(r['value']['elements']))
+            if len(a)>1:
+                for u in a:
+                    add_data_special(hiper_nodes_list,u)
+            else:
+                add_data_special(hiper_nodes_list,a[0])
+
+    for key in lt.iterator(hiper_nodes_list['table']):
+        if key['key']!=None and key['value']['size']>1:
+            hiper_np=str(str(key['key'][0])+'_'+str(key['key'][1])).replace('.','p').replace('-','m')
+            gr.insertVertex(new_graph,hiper_np)
+            for k in lt.iterator(array_vertex):
+                d_split=k.split('_')
+                if d_split[0]+'_'+d_split[1]==hiper_np:
+                    gr.addEdge(new_graph,k,hiper_np,0)
+                    gr.addEdge(new_graph,hiper_np,k,0)
+    
+    scc_graph=scc.KosarajuSCC(new_graph)
+    for h in lt.iterator(scc_graph['idscc']['table']):
+        if h['key']!=None:
+            add_data_new_graph(components,h)
+
+    for i in lt.iterator(components['table']):
+        if i['key']!=None:
+            lt.addLast(list_components,i)
+
+    list_territories=quk.sort(list_components,cmp_hash_table)#numero de mandas
+    
+    list_territories_first_last=list_territories['elements'][:3]+list_territories['elements'][-3:]
+
+    rows=lt.newList(datastructure='ARRAY_LIST')
+
+    for x in list_territories_first_last:        
+        hiper_nodes_sub_list=lt.newList(datastructure='ARRAY_LIST')#SIZE_HIPERNODOS
+        herd_members=lt.newList(datastructure='ARRAY_LIST')#size_miembros manada
+
+        tua=nua(x['value'])
+        hiper_nodes_sub_list=tua[0]
+        herd_members=tua[1]
+
+        hiper_nodes_sub_list_3_first_last=set(hiper_nodes_sub_list['elements'][:3]+hiper_nodes_sub_list['elements'][-3:])#lista_nodos_3_first_last
+
+        herd_members_3_first_last=set(herd_members['elements'][:3]+herd_members['elements'][-3:])#lista_members_3_first_last
+
+        list_wolf_details=lt.newList(datastructure='ARRAY_LIST')#Detalles del lobo
+
+        for f in herd_members_3_first_last:
+            for s in lt.iterator(data_structs['list_individuals']):
+                if s['individual-id']==f:
+                    lt.addLast(list_wolf_details,s)
+        
+        list_lon=lt.newList(datastructure='ARRAY_LIST')
+        list_lat=lt.newList(datastructure='ARRAY_LIST')
+        if len(hiper_nodes_sub_list_3_first_last)==0:
+            lt.addLast(list_lon,'None')
+            lt.addLast(list_lat,'None')
+
+        for ab in hiper_nodes_sub_list_3_first_last:
+            ab_list=ab.split('_')
+            lt.addLast(list_lon,float(ab_list[0].replace('m','-').replace('p','.')))
+            lt.addLast(list_lat,float(ab_list[1].replace('m','-').replace('p','.')))
+
+        me_ma_lat=quk.sort(list_lon,cmp_lon_lat)['elements']#menor:0 mayor:-1  LON
+        me_ma_lon=quk.sort(list_lat,cmp_lon_lat)['elements']#menor:0 mayor:-1 LAT
+        lt.addLast(rows,[hiper_nodes_sub_list['size'],hiper_nodes_sub_list_3_first_last,herd_members['size'],list_wolf_details['elements'],me_ma_lat[0],me_ma_lat[-1],me_ma_lon[0],me_ma_lon[-1]])
+
+    largest_territorie=lt.newList(datastructure='ARRAY_LIST')
+    for cd in lt.iterator(list_territories):
+        semi_djk_graph=djk.Dijkstra(new_graph,cd['value']['elements'][0])
+        lt.addLast(largest_territorie,(cd['key'],djk.distTo(semi_djk_graph,cd['value']['elements'][-1])))
+
+    largest_path_territorie=quk.sort(largest_territorie,cmp_harvesine)['elements'][-1]
+    part_2=lt.newList(datastructure='ARRAY_LIST')
+
+    for fr in lt.iterator(list_territories):
+        
+        #distancia larga recorrida
+        if largest_path_territorie[0]==fr['key']:
+
+            
+            semi_djk_graph=djk.Dijkstra(new_graph,fr['value']['elements'][0])
+            path_largest=djk.pathTo(semi_djk_graph,fr['value']['elements'][-1])
+
+            # numero de puentes
+            fua=nua(fr['value'])
+            list_hiper_nodes=fua[0]#Contador hiper_nodos
+            list_individuals=fua[1]#contador individuos
+
+
+            first_last_3_hiper_nodes=set([fr['value']['elements'][0]]+list_hiper_nodes['elements'][:3]+list_hiper_nodes['elements'][-3:]+[fr['value']['elements'][-1]])
+            first_last_3_individuals=set(list_individuals['elements'][:3]+list_individuals['elements'][-3:])
+            
+            lt.addLast(part_2,[largest_path_territorie[1],list_hiper_nodes['size'],(path_largest['size'])-1,first_last_3_hiper_nodes,set(list_individuals['elements']),first_last_3_individuals])
+            return scc.connectedComponents(scc_graph),rows['elements'],part_2['elements']
 def req_8(data_structs):
     """
     Función que soluciona el requerimiento 8
