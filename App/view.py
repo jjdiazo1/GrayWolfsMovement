@@ -47,7 +47,21 @@ def new_controller():
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
     return controller.new_controller()
+def tabulate_data(data_set,header):
+    data_set_org=[]
+    for i in data_set:
+        i=dict([(key,val) for key,val in i.items() if key in header])
+        data_set_org.append(i)
+    rows=[x.values() for x in data_set_org]
+    print(tabulate(rows,list(data_set_org[0].keys()),tablefmt='grid',stralign='center',maxheadercolwidths=13,maxcolwidths=13))
 
+def tabulate_data_req7(data_set,header):
+    data_set_org=[]
+    for i in data_set:
+        i=dict([(key,val) for key,val in i.items() if key in header])
+        data_set_org.append(i)
+    rows=[x.values() for x in data_set_org]
+    return tabulate(zip(*[list(data_set_org[0].keys()),list(data_set_org[0].values())]), tablefmt='grid',maxcolwidths=14)
 
 def print_menu():
     print("Bienvenido")
