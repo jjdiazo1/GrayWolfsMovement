@@ -224,22 +224,22 @@ def req_5(control,origen,distancia,numero):
    return model.req_5(control,origen,distancia,numero)
 
 
-def req_6(control):
+def req_6(control,init_date,end_date,animal_sex):
    """
    Retorna el resultado del requerimiento 6
    """
    # TODO: Modificar el requerimiento 6
-   pass
+   return model.req_6(control,init_date,end_date,animal_sex)
 
 
 
 
-def req_7(control):
+def req_7(control,init_date,end_date,temp_min,temp_max):
    """
    Retorna el resultado del requerimiento 7
    """
    # TODO: Modificar el requerimiento 7
-   pass
+   return model.req_7(control,init_date,end_date,temp_min,temp_max)
 
 
 
