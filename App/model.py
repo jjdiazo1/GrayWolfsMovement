@@ -139,57 +139,123 @@ def req_2(data_structs):
     # TODO: Realizar el requerimiento 2
     pass
 
-#& CHECKLIST
-
-#*SCID
-#*SCC size
-#TODO latitudes (Solo falta hacer el for para que recorra los codigos y arme una lista con ellos, ya con lista ez)
-#^wolf count EZ
-#!INTERPRETAR LOS DATOS DE CODIGOS con _
-#TODO Con la lista de codigos y cosas verificar que lobos estan ahi y agregarlos a la lista de lobos.
-#? DICCIONARIO PARA EMPAQUETAR LOS TOP WOLFS
-#TODO Node ids (Mostrar top 3 y bot 3 en view)
-#? TABULAR
-
-def req_3(data_structs, wolf_list):
+def req_3(data_structs):
     """
     Función que soluciona el requerimiento 3
     """
     # TODO: Realizar el requerimiento 3
     
-    #&KOSARAJU
-    #&___________________________.....___________________________
+    sccmap, sc = kosaraju(data_structs) #Aca ya tenemos el sccmap en el que estan los IDCC con sus respectivas componentes
+    oficial = top_5_scc(sccmap) #Y aca el top 5 de los IDCC que mas componentes tienen.
     
-    sc = scc.KosarajuSCC(data_structs)
+    llaves = mp.keySet(oficial)
+    dataframe = lt.newList("ARRAY_LIST")
+    
+    #Este ciclo solo se hara 5 veces, por el top 5
+    for key2 in lt.iterator(llaves): #Aca vamos a recorrer la lista de codigos en los 5 casos. Para extraer la info de cada uno.
+        longitudes = lt.newList("ARRAY_LIST")
+        latitudes = lt.newList("ARRAY_LIST")
+        wolfs_id = lt.newList("ARRAY_LIST")
+        entry = mp.get(oficial, key2)
+        lista = me.getValue(entry)
+        
+        for node in lt.iterator(lista):
+            longitude, latitude, id_animal = extract_info(node) #Extraccion de latitudes, codigos de lobo y longitudes.
+            lt.addLast(latitudes, float(latitude))
+            lt.addLast(longitudes, float(longitude))
+            if id_animal not in wolfs_id["elements"] and id_animal != '':
+                lt.addLast(wolfs_id, id_animal)        
+        
+        wolf_count = lt.size(wolfs_id)
+        top3_nodes = lt.subList(lista, 0, 3)
+        bot3_nodes = lt.subList(lista, lt.size(lista)-2, 3)
+        
+        #Para evitar tener que recorrer todas las listas buscando por el max y el min.
+        #QUise utilizar minpq pero no encontre maxpq asi q no lo implemente.
+        max_lat = max(latitudes["elements"])
+        max_long = max(longitudes["elements"])
+        min_lat = min(latitudes["elements"])
+        min_long = min(longitudes["elements"])
+    
+        if wolf_count <= 5:
+            top3 = wolfs_id
+            bot3 = top3
+        #Esto es mera cortesia por si acaso hay mas de 5 lobos en la lista. pero no pasa.
+        else:
+            top3 = lt.subList(wolfs_id, 0, 3)
+            bot3 = lt.subList(wolfs_id, (wolf_count)-2, 3)
+                                        
+        lista_final = lt.newList("ARRAY_LIST")
+        ids_finales = lt.newList("ARRAY_LIST")
+        for wolf in lt.iterator(data_structs["list_individuals"]):
+            for t3 in lt.iterator(top3):
+                #Comprobamos que el del top sea el mismo que el de la lista final 
+                #y si lo es le quitamos el id a la lista y lo metemos en la lista final de lobos.
+                if wolf["animal-id"] in t3 and wolf["animal-id"] not in ids_finales["elements"]: #Para que no se repitan los lobos
+                    lt.addLast(lista_final, wolf)
+                    lt.addLast(ids_finales, wolf["animal-id"])
+                
+        #Esto ya es para el view
+        lista_lobos = lt.newList("ARRAY_LIST")
+        
+        for wolf in lt.iterator(lista_final):
+            w_id = wolf["animal-id"]
+            w_sex = wolf["animal-sex"]
+            w_life = wolf["animal-life-stage"]
+            w_study = wolf["study-site"]
+            w_comments = wolf["deployment-comments"]
+            lt.addLast(lista_lobos, [w_id, w_sex, w_life, w_study, w_comments])
+            
+        lista_lobos_def = lista_lobos_fix(lista_lobos)
+        headers=["individual-id", "animal-sex", "animal-life-stage", "study-site", "deployment-comments"]
+        #Empaquetamos la lista ya tabulada para no tener que hacer mas ciclos en el view.
+        lista_lobos_tabulada = tb.tabulate(lista_lobos_def["elements"], headers=headers, maxheadercolwidths= [12, 12, 12, 12, 15], maxcolwidths= [12, 12, 12, 12, 15], tablefmt="fancy_grid")
+        #Sacamos las demas variables que necesitamos para el view.
+        nodes = get_nodes(top3_nodes, bot3_nodes) 
+        entry_idsc = mp.get(sc["idscc"], lt.firstElement(top3_nodes))
+        idscc = me.getValue(entry_idsc)
+        lt.addLast(dataframe, [idscc, nodes, key2, min_lat, max_lat, \
+            min_long, max_long, wolf_count, lista_lobos_tabulada])
+    return dataframe
+
+def kosaraju(data_structs):
+    
+    """Genera el mapa de componentes fuertemente conectadas
+    utilizando el algoritmo de kosaraju."""
+    
+    sc = scc.KosarajuSCC(data_structs["graph"])
     scmarked = sc["marked"]
-    marcas = lt.newList("ARRAY_LIST")
+    marks = lt.newList("ARRAY_LIST")
     componentes = sc["idscc"]
     sccmap = mp.newMap(maptype="PROBING")
-    
-    for llave in lt.iterator(mp.keySet(componentes)):
-        entry = mp.get(componentes, llave)
+    for key in lt.iterator(mp.keySet(componentes)):
+        entry = mp.get(componentes, key)
         valor = me.getValue(entry)
-        if lt.isPresent(marcas, valor) == 0:
-            lt.addLast(marcas, valor)
+        if lt.isPresent(marks, valor) == 0:
+            lt.addLast(marks, valor)
             comp_list = lt.newList("ARRAY_LIST")
-            lt.addLast(comp_list, llave)
+            lt.addLast(comp_list, key)
             mp.put(sccmap, valor, comp_list)
         else: 
             entry1 = mp.get(sccmap, valor)
-            lst = me.getValue(entry1)
-            lt.addLast(lst, llave)
+            value1 = me.getValue(entry1)
+            lt.addLast(value1, key)
             
-    #Aca ya tenemos el sccmap en el que estan los IDCC con sus respectivas componentes
-    #&TOP 5
-    #&___________________________.....___________________________
+    return sccmap, sc
+
+def top_5_scc(sccmap):
+    
+    """Genera el top 5 de las componentes fuertemente conectadas.
+    Recorriendo el mapa de componentes fuertemente conectadas y extrayendo las que
+    mas tienen nodos adentro."""
     
     lista_cc = lt.newList("ARRAY_LIST")
     size_list = lt.newList("ARRAY_LIST")
     ofcval = mp.newMap(maptype="PROBING")
     oficial = mp.newMap(maptype="PROBING")
-    for llave in lt.iterator(mp.keySet(sccmap)):
-        lt.addLast(lista_cc, llave)
-        entry = mp.get(sccmap, llave)
+    for key1 in lt.iterator(mp.keySet(sccmap)):
+        lt.addLast(lista_cc, key1)
+        entry = mp.get(sccmap, key1)
         lst = me.getValue(entry)
         size = lt.size(lst)
         lt.addLast(size_list, size)
@@ -197,102 +263,9 @@ def req_3(data_structs, wolf_list):
     size_list = sorted(size_list["elements"], reverse=True)
     for i in range(0, 5):
         mp.put(oficial, size_list[i], me.getValue(mp.get(ofcval, size_list[i])))
-    #Aca ya tenemos el top 5 de las componentes con mayor cantidad de individuos en la var oficial.
     
-    #&EXTRACCION DE INFO DE LOS NODOS
-    #&___________________________.....___________________________
-    
-    i = 0
-    llaves = mp.keySet(oficial)
-    dataframe = lt.newList("ARRAY_LIST")
-    
-    #Este ciclo solo se hara 5 veces
-    for llave in lt.iterator(llaves):
-        longitudes = lt.newList("ARRAY_LIST")
-        latitudes = lt.newList("ARRAY_LIST")
-        wolfs_id = lt.newList("ARRAY_LIST")
-        entry = mp.get(oficial, llave)
-        lista = me.getValue(entry)
-        
-        #Aca vamos a recorrer la lista de codigos en los 5 casos. Para extraer
-        #Latitudes, codigos de lobo y longitudes.
-        for node in lt.iterator(lista):
-            
-            longitude, latitude, id_animal = extract_info(node)
-            
-            lt.addLast(latitudes, float(latitude))
-            lt.addLast(longitudes, float(longitude))
-            
-            if id_animal not in wolfs_id["elements"] and id_animal != '':
-                lt.addLast(wolfs_id, id_animal)
-            
-    #&Variables para el view
-    #&___________________________.....___________________________
-        
-        wolf_count = lt.size(wolfs_id)
-                
-        top3_nodes = lt.subList(lista, 0, 3)
-        bot3_nodes = lt.subList(lista, lt.size(lista)-2, 3)
-        
-        max_lat = max(latitudes["elements"])
-        max_long = max(longitudes["elements"])
-        min_lat = min(latitudes["elements"])
-        min_long = min(longitudes["elements"])
-                
-    #&Top 3 y bot 3 lobos
-    #&___________________________.....___________________________
-    
-        if wolf_count <= 5:
-            
-            top3 = wolfs_id
-            bot3 = top3
-            
-        #Esto es mera cortesia por si acaso hay mas de 5 lobos en la lista. pero no pasa.
-        else:
-            
-            top3 = lt.subList(wolfs_id, 0, 3)
-            bot3 = lt.subList(wolfs_id, (wolf_count)-2, 3)
-                                        
-        lista_final = lt.newList("ARRAY_LIST")
-        for wolf in lt.iterator(wolf_list):
-            
-            for t3 in lt.iterator(top3):
-                
-                if wolf["animal-id"] in t3:
-                    
-                    lt.addLast(lista_final, wolf)
-                
-        #&Organizar lista lobos
-        #&___________________________.....___________________________
-        #Como esto ya es para el view usamos lista de python para facilizar el proceso.
-        lista_lobos = []
-        
-        #Basicamente comprobamos que el del top sea el mismo que el de la lista final 
-        # y si lo es le quitamos el id a la lista y lo metemos en el diccionario completo.
-        
-        for wolf in lt.iterator(lista_final):
-            
-            w_id = wolf["animal-id"]
-            w_sex = wolf["animal-sex"]
-            w_life = wolf["animal-life-stage"]
-            w_study = wolf["study-site"]
-            w_comments = wolf["deployment-comments"]
-            
-            lista_lobos.append([w_id, w_sex, w_life, w_study, w_comments])
-            
-        lista_lobos_def = lista_lobos_fix(lista_lobos)
-        lista_lobos_tabulada = tb.tabulate(lista_lobos_def, headers=["individual-id", "animal-sex", "animal-life-stage", "study-site", "deployment-comments"],
-                                           maxheadercolwidths= [12, 12, 12, 12, 15], maxcolwidths= [12, 12, 12, 12, 15], tablefmt="fancy_grid")
-                    
-        #Variables finales para el view
-        nodes = get_nodes(top3_nodes, bot3_nodes)
-        entry_idsc = mp.get(sc["idscc"], lt.firstElement(top3_nodes))
-        idscc = me.getValue(entry_idsc)#Cualquier nodo su valor asignado en scc.
-        lt.addLast(dataframe, [idscc, nodes, llave, min_lat, max_lat, \
-            min_long, max_long, wolf_count, lista_lobos_tabulada])
-        
-    return dataframe
-            
+    return oficial
+
 def extract_info(code):
     
     """Esta funcion va a extraer la informacion de los codigos de los lobos
@@ -301,122 +274,76 @@ def extract_info(code):
     longitud = ''
     latitud = ''
     wolf_id = ''
-    
     first_m = False
     first_p = False
     is_latitud = False
     is_wolf = False
-    
     first_p_lat = False
     skip_first_underscore = False
-    
     for letra in code:
-        
         if not first_m or not first_p:
-            
             if letra == 'm':
-                
                 longitud += '-'
                 first_m = True
-                
-            
-            
             elif letra == 'p':
-                
                 longitud += '.'
                 first_p = True
-                
             elif letra != 'p' and letra != 'm':
-                
                 longitud += letra
-                
         #Aca comprobamos si ya se cumplio el primer if osea 
         #Ya se recorrio el m111p pero luego siguen los 3 digitos despues del .
         elif first_m and first_p and not is_latitud:
-            
             if letra == '_':
-                
                 is_latitud = True
-                
             else: 
-                
                 longitud += letra
-            
         #Aca ya estamos en la siguiente iteracion que seria cuando 
         #Va despues del _ osea 57p474
         elif is_latitud and letra != '_' and not is_wolf:
-            
             if not first_p_lat:
-                    
                 if letra == 'p':
-                    
                     latitud += '.'
                     first_p_lat = True
-                    
                 else: 
-                
                     latitud += letra
-                    
             else: 
-                
                 latitud += letra
-                    
         elif first_p_lat and not is_wolf:
-            
             if letra == '_':
-                
                 is_wolf = True
-                
             else: 
-                
                 latitud += letra
-                
         if is_wolf and letra != '_' and skip_first_underscore == False:
-            
             wolf_id += letra
             skip_first_underscore = True
-            
         if is_wolf and skip_first_underscore:
-            
             wolf_id += letra
 
     return longitud, latitud, wolf_id
     
 def get_nodes(top3, bot3):
     
-    "Recibe los top 3 y bot 3 de los nodos y devuelve el formato deseado para el view"
+    """Recibe los top 3 y bot 3 de los nodos 
+    y devuelve el formato deseado para el view"""
     
     final_string = ''
-    
     first = True
     for node in lt.iterator(top3):
-        
         if first:
-            
           final_string += node
-          
         else:
-            
             final_string += ', ' + node
-            
         first = False
-        
     final_string += ','
     final_string += '...,'
-        
     firstt = True
     for nodo in lt.iterator(bot3):
-        
         if firstt:
-            
           final_string += nodo
-          
         else:
-            
             final_string += ', ' + nodo
-            
         firstt = False
-
+        
     return final_string
     
 def lista_lobos_fix(lista_lobos):
@@ -424,14 +351,11 @@ def lista_lobos_fix(lista_lobos):
     """Recibe una lista de lobos y con esa lista cambia
     Los '' por unknown."""
     
-    for element in lista_lobos:
-        
-        for i in range(len(element)):
-            
-            if element[i] == '':
-                
+    for element in lt.iterator(lista_lobos):
+        for i in range(len(element)):#Aca tenemos el individual-id, animal sex etc. 
+            if element[i] == '':#Osea se chequea por cada atributo que tenga el lobo
                 element[i] = 'Unknown'
-                
+
     return lista_lobos
     
 def req_4(data_structs):

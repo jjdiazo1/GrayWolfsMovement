@@ -177,11 +177,11 @@ def req_2(control):
 
 
 
-def req_3(control, wolf_list):
+def req_3(control):
    """
    Retorna el resultado del requerimiento 3
    """
-   return model.req_3(control, wolf_list)
+   return model.req_3(control)
    
 
 

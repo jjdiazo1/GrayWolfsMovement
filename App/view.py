@@ -72,8 +72,8 @@ def load_data(control):
     Todo esta ya hecho falta el print del view osea las palabras y eso pero la info esta alli, osea todo esta hecho solo falta mostrarlo. Esto del view 
     usualemnte lo hacemos al final del reto siempre , porque es la parte menos importante, entonces eimpre lo dejamos hasta el final, todo lo del view.
     '''
-    control, wolfs_list = (controller.load_data(control))
-    return control, wolfs_list
+    control = controller.load_data(control)
+    return control
    
 
 
@@ -102,13 +102,13 @@ def print_req_2(control):
     pass
 
 
-def print_req_3(control, wolf_list):
+def print_req_3(control):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
     
-    dataframe = controller.req_3(control, wolf_list)
+    dataframe = controller.req_3(control)
     
     headers = ['SCCID', 'Node IDs', 'min-lat', 'max-lat', 'min-lon', 'max-lon', 'wolf-count', 'wolf-details']
     
@@ -174,7 +174,7 @@ if __name__ == "__main__":
         try:
             if int(inputs) == 1:
                 print("Cargando información de los archivos ....\n")
-                data, wolf_list = load_data(control)
+                data = load_data(control)
                 
             elif int(inputs) == 2:
                 print_req_1(control)
@@ -183,7 +183,7 @@ if __name__ == "__main__":
                 print_req_2(control)
 
             elif int(inputs) == 4:
-                print_req_3(control, wolf_list)
+                print_req_3(control)
 
             elif int(inputs) == 5:
                 print_req_4(control)
