@@ -45,6 +45,7 @@ from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
+from datetime import datetime
 assert cf
 import tabulate as tb
 """
@@ -507,12 +508,106 @@ def req_5(data_structs,origen,distancia,numero):
         mp.put(mapa,"número de individuos",lista_ind)
         if (dist<=distancia or dist>distancia-5) and (puntos>numero):
             return mapa
-def req_6(data_structs):
+def req_6(data_structs,init_date,end_date,animal_sex):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    pass
+    
+    #Primera parte
+    if animal_sex=='hembras':
+        animal_sex='f'
+    if animal_sex=='machos':
+        animal_sex='m'
+
+    list_indi_short=lt.newList(datastructure='ARRAY_LIST')
+    list_vertex_m_f=lt.newList(datastructure='ARRAY_LIST')
+    hash_filter_vertex=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
+    list_shortest_path=lt.newList(datastructure='ARRAY_LIST')
+
+    for g in range(0,data_structs['list_individuals']['size']):
+        if data_structs['list_individuals']['elements'][g]['animal-sex']==animal_sex:
+            lt.addLast(list_indi_short,data_structs['list_individuals']['elements'][g])
+            lt.addLast(list_vertex_m_f,data_structs['list_individuals']['elements'][g]['individual-id'])
+
+
+    for i in lt.iterator(data_structs['hash_vertex']['table']):
+        if i['key']!=None and i['key']in list_vertex_m_f['elements']:
+            
+            for j in lt.iterator(i['value']):
+                if datetime.strptime(init_date,'%Y-%m-%d %H:%M')<=j['time_datetime']<=datetime.strptime(end_date,'%Y-%m-%d %H:%M'):
+                    add_data(hash_filter_vertex,j)
+
+    for y in lt.iterator(hash_filter_vertex['table']):
+        if y['key']!=None:
+            mini_graph=djk.Dijkstra(data_structs['graph'],y['value']['elements'][0]['vertex'])
+            djk.pathTo(mini_graph,y['value']['elements'][-1]['vertex'])
+            lt.addLast(list_shortest_path,(y['value']['elements'][-1]['individual-id'],djk.distTo(mini_graph,y['value']['elements'][-1]['vertex'])))
+    
+    shortest_larger_path=quk.sort(list_shortest_path,cmp_harvesine)
+    shortest_path=lt.firstElement(shortest_larger_path)#0: KEY 1:DISTANCIA RECORRDIA
+    larger_path=shortest_larger_path['elements'][-1]
+
+    total_distance_shortest=mp.get(data_structs['hash_table_ocurrence'],shortest_path[0])
+    total_distance_larger=mp.get(data_structs['hash_table_ocurrence'],larger_path[0])
+
+    graph_djk_total_shortest=djk.Dijkstra(data_structs['graph'],total_distance_shortest['value']['elements'][0]['vertex'])
+    path_total_shortest=djk.distTo(graph_djk_total_shortest,total_distance_shortest['value']['elements'][-1]['vertex'])#Camino
+
+    graph_djk_total_larger=djk.Dijkstra(data_structs['graph'],total_distance_larger['value']['elements'][0]['vertex'])
+    path_total_larger=djk.distTo(graph_djk_total_larger,total_distance_larger['value']['elements'][-1]['vertex'])#Camino
+
+    s_1=mp.get(hash_filter_vertex,shortest_path[0])
+    graph_djk_shortest=djk.Dijkstra(data_structs['graph'],s_1['value']['elements'][0]['vertex'])
+    path_shortest=djk.pathTo(graph_djk_shortest,s_1['value']['elements'][-1]['vertex'])#Camino
+
+    s_2=mp.get(hash_filter_vertex,larger_path[0])
+    graph_djk_larger=djk.Dijkstra(data_structs['graph'],s_2['value']['elements'][0]['vertex'])
+    path_larger=djk.pathTo(graph_djk_larger,s_2['value']['elements'][-1]['vertex'])#Camino
+    
+    list_individual_short_char=lt.newList(datastructure='ARRAY_LIST')
+    list_individual_large_char=lt.newList(datastructure='ARRAY_LIST')
+
+    for w in lt.iterator(list_indi_short):
+        if w['individual-id']==shortest_path[0]:
+            lt.addLast(list_individual_short_char,w)#carecteristicas
+        if w['individual-id']==larger_path[0]:
+            lt.addLast(list_individual_large_char,w)#carecteristicas
+
+    hiper_nodes_route_shortest=lt.newList(datastructure='ARRAY_LIST')
+    hiper_nodes_route_larger=lt.newList(datastructure='ARRAY_LIST')
+
+    for b in lt.iterator(path_shortest):
+        if b['weight']==0 and len(b['vertexA'].split('_'))==2:
+                lt.addLast(hiper_nodes_route_shortest,b['vertexA'])
+    
+        if b['weight']==0 and len(b['vertexB'].split('_'))==2:
+                lt.addLast(hiper_nodes_route_shortest,b['vertexB'])     
+
+    for r in lt.iterator(path_larger):
+        if r['weight']==0 and len(r['vertexA'].split('_'))==2:
+                lt.addLast(hiper_nodes_route_larger,r['vertexA'])
+    
+        if r['weight']==0 and len(r['vertexB'].split('_'))==2:
+                lt.addLast(hiper_nodes_route_larger,r['vertexB'])    
+    
+    hiper_nodes_route_shortest=list(set(hiper_nodes_route_shortest['elements']))#Lenght total hiper_nodos
+    hiper_nodes_route_larger=list(set(hiper_nodes_route_larger['elements']))#Lenght total hiper_nodos
+
+    path_larger_size=(path_larger['size'])-1
+    path_shortest_size=(path_shortest['size'])-1
+
+    list_3_first_last_shortest=lt.newList(datastructure='ARRAY_LIST')
+    list_3_first_last_larger=lt.newList(datastructure='ARRAY_LIST')
+
+    list_3_first_last_shortest=first_3_last_3(data_structs,hiper_nodes_route_shortest)    
+    list_3_first_last_larger=first_3_last_3(data_structs,hiper_nodes_route_larger)
+    
+    list_individual_short_char['elements'][0]['total_distance']=path_total_shortest
+    list_individual_large_char['elements'][0]['total_distance']=path_total_larger
+    
+    return list_individual_short_char['elements'][0],shortest_path[1],len(hiper_nodes_route_shortest),path_shortest_size,list_3_first_last_shortest,list_individual_large_char['elements'][0],larger_path[1],len(hiper_nodes_route_larger),path_larger_size,list_3_first_last_larger
+    
 def req_7(data_structs):
     """
     Función que soluciona el requerimiento 7
