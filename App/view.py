@@ -156,7 +156,25 @@ def print_req_7(control):
         Función que imprime la solución del Requerimiento 7 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 7
-    pass
+    fecha_inicial = input("Ingrese la fecha inicial del análisis (formato YYYY-MM-DD): ")
+    fecha_final = input("Ingrese la fecha final del análisis (formato YYYY-MM-DD): ")
+    temperatura_minima = float(input("Ingrese la temperatura ambiente mínima (en grados centígrados): "))
+    temperatura_maxima = float(input("Ingrese la temperatura ambiente máxima (en grados centígrados): "))
+
+    headers_1_1=['individual-id','animal-taxon','animal-life-stage','animal-sex','study-name','total_distance','deployment-comments']
+
+    x=controller.req_7(control,fecha_inicial,fecha_final,temperatura_minima,temperatura_maxima)
+    print('El total de manadas reconocidas por sus movimientos y puntos de encuentro (componentes conectados) en el rango de fechas y temperatura ambiente dados.',x[0])
+    headers = ["Num Puntos Encuentro","Los tres primeros y tres últimos puntos de encuentro reconocidos dentro del territorio","Num Individuos por manada","Los tres primeros y tres últimos miembros de la manada","Longitud min","Longitud max","Latitudes min","Latitudes max"]
+
+    for i in x[1]:
+        i[3]=tabulate_data_req7(i[3],headers_1_1)
+    
+    print(tabulate(x[1],headers,tablefmt='grid',stralign='center',maxheadercolwidths=13))
+
+    headers_3=["Distancia Total","Total Nodos","Total Arcos","Puntos de Encuentro","Total Individuos","Individuos Distintos"]
+    
+    print(tabulate(x[2],headers_3,tablefmt='grid',stralign='center',maxheadercolwidths=13,maxcolwidths=13))
 
 
 def print_req_8(control):
