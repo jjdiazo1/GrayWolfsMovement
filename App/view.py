@@ -127,9 +127,6 @@ def print_req_1(control):
         lista.append(i)
     tabulate_data(lista,headers)
     
-    
-
-
 
 def print_req_2(control):
     """
@@ -138,7 +135,7 @@ def print_req_2(control):
     # TODO: Imprimir el resultado del requerimiento 2
     origen = input("Ingrese el punto de origen: ")
     destino= input("Ingrese el punto de destino: ")
-    final=controller.req_2(control,origen,destino)
+    final=controller.req_2(control,"m111p862_57p449","m111p908_57p427")
     print(final)
 
 
