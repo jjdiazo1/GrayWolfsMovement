@@ -121,7 +121,7 @@ def req_1(data_structs,origen,destino):
     """
     # TODO: Realizar el requerimiento 1
     dist=0
-    contador=1
+    contador=0
     grafo=dfs.DepthFirstSearch(data_structs["graph"],origen)
     pila=dfs.pathTo(grafo,destino)
     nodo=origen
@@ -130,7 +130,7 @@ def req_1(data_structs,origen,destino):
     salida=st.newStack()
     size=st.size(pila) 
     xcosa=st.pop(pila)
-    st.push(salida,xcosa)
+    #st.push(salida,xcosa)
     lista_lobos=lt.newList()
     while pila is not None and not lt.isEmpty(pila):
         nodo2=st.pop(pila)
@@ -155,7 +155,7 @@ def req_1(data_structs,origen,destino):
             total_seg+=1
         else:
             total_enc+=1
-        if contador <5 or (contador <= size and contador>=size-5):
+        if contador <5 or (contador <= size and contador>=size-6):
             st.push(salida,dicci)
         nodo=nodo2
         contador+=1
