@@ -117,7 +117,7 @@ def print_req_1(control):
     # TODO: Imprimir el resultado del requerimiento 1
     origen = input("Ingrese el punto de origen: ")
     destino= input("Ingrese el punto de destino: ")
-    final=controller.req_1(control,"m111p862_57p449","m111p908_57p427")
+    final=controller.req_1(control,origen,destino)
     print("La distancia total que tomará el camino entre el punto de encuentro de origen y el de destino.",final[0])
     print("El total de puntos de encuentro que contiene el camino encontrado.",final[1])
     print("El total de nodos de seguimiento que tiene el camino encontrado.",final[2])
