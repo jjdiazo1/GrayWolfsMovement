@@ -72,8 +72,20 @@ def load_data(control):
     Todo esta ya hecho falta el print del view osea las palabras y eso pero la info esta alli, osea todo esta hecho solo falta mostrarlo. Esto del view 
     usualemnte lo hacemos al final del reto siempre , porque es la parte menos importante, entonces eimpre lo dejamos hasta el final, todo lo del view.
     '''
-    control = controller.load_data(control)
-    return control
+    a=controller.load_data(control)
+    print("Total de lobos reconocidos en el estudio:", a[1])
+    print("Total de eventos cargados durante el estudio:", a[2])
+    print("Total de puntos de encuentro reconocidos:", a[3])
+    print("Total de puntos de seguimiento reconocidos:", a[4])
+    print("Total de arcos creados para unir los nodos de encuentro y los puntos de seguimiento:", a[5])
+    print("Total de arcos creados para representar el movimiento de los individuos:", a[6])
+    print("Rango del área rectangular que ocupan los lobos grises de Boutin Alberta en Canadá:")
+    print("Latitud mínima & máxima:", str(a[7][0][0])+' and '+str(a[7][0][1]))
+    print("Longitud mínima & máxima:", str(a[7][1][0])+' and '+str(a[7][1][1]))
+    print('\n')
+    print('\n')
+    headers=["Identificador del punto de encuentro","Geolocalización","Total de lobos","Lista de identificadores"]
+    print(tabulate(a[8]['elements'],headers,tablefmt='grid',stralign='center',maxheadercolwidths=15,maxcolwidths=15))
    
 
 
