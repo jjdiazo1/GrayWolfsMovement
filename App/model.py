@@ -121,7 +121,7 @@ def req_1(data_structs,origen,destino):
     """
     # TODO: Realizar el requerimiento 1
     dist=0
-    contador=1
+    contador=0
     grafo=dfs.DepthFirstSearch(data_structs["graph"],origen)
     pila=dfs.pathTo(grafo,destino)
     nodo=origen
@@ -130,7 +130,7 @@ def req_1(data_structs,origen,destino):
     salida=st.newStack()
     size=st.size(pila) 
     xcosa=st.pop(pila)
-    st.push(salida,xcosa)
+    #st.push(salida,xcosa)
     lista_lobos=lt.newList()
     while pila is not None and not lt.isEmpty(pila):
         nodo2=st.pop(pila)
@@ -155,7 +155,7 @@ def req_1(data_structs,origen,destino):
             total_seg+=1
         else:
             total_enc+=1
-        if contador <5 or (contador <= size and contador>=size-5):
+        if contador <5 or (contador <= size and contador>=size-6):
             st.push(salida,dicci)
         nodo=nodo2
         contador+=1
@@ -191,7 +191,12 @@ def req_2(data_structs,origen,destino):
             if i<3 or (i<= lt.size(lobos_adj) and i>=lt.size(lobos_adj)-3):
                 lt.addLast(lista_lobos,j)
             i+=1
-        dicci={"id":ide,"longitud":lon,"latitud":lat,"numero individuos":num_ind,"lobos":lista_lobos,"distancia al siguiente vértice":edge,"siguiente vértice":e["vertexB"]}
+
+        lista_lista_lobos=lt.newList(datastructure='ARRAY_LIST')
+        for k in lt.iterator(lista_lobos):
+            lt.addLast(lista_lista_lobos,k)
+
+        dicci={"id":ide,"longitud":lon,"latitud":lat,"numero individuos":num_ind,"lobos":set(lista_lista_lobos['elements'][:3]+lista_lista_lobos['elements'][-3:]),"distancia al siguiente vértice":edge,"siguiente vértice":e["vertexB"]}
         if edge !=0:
             total_seg+=1
         else:
@@ -199,8 +204,6 @@ def req_2(data_structs,origen,destino):
         if contador <5 or (contador <= size and contador>=size-5):
             st.push(salida,dicci)
         contador+=1
-    for x in lt.iterator(salida):
-        print(x)
     tupla=(dist,total_enc,total_seg,salida)
     return tupla
 def req_3(data_structs):
@@ -648,7 +651,7 @@ def req_7(data_structs,init_date,end_date,temp_min,temp_max):
     for j in lt.iterator(data_structs['hash_table_ocurrence']['table']):
         if j['key']!=None and j['key'] in list_individual_id_selected['elements']:
             for k in lt.iterator(j['value']):
-                if temp_min<=k['external-temperature']<=temp_max and init_date<=k['time_datetime']<=end_date:
+                if temp_min<=float(k['external-temperature'])<=temp_max and init_date<=k['time_datetime']<=end_date:
                     add_data(hash_table_filtered,k)
                     add_data_hiper_nodes(hiper_nodes,k)
                     if not gr.containsVertex(new_graph,k['vertex']):
