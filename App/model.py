@@ -762,7 +762,7 @@ def req_7(data_structs,init_date,end_date,temp_min,temp_max):
             first_last_3_individuals=set(list_individuals['elements'][:3]+list_individuals['elements'][-3:])
             
             lt.addLast(part_2,[largest_path_territorie[1],list_hiper_nodes['size'],(path_largest['size'])-1,first_last_3_hiper_nodes,set(list_individuals['elements']),first_last_3_individuals])
-            return scc.connectedComponents(scc_graph),rows['elements'],part_2['elements']
+    return scc.connectedComponents(scc_graph),rows['elements'],part_2['elements']
 def req_8(data_structs):
     """
     Función que soluciona el requerimiento 8
