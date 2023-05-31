@@ -629,7 +629,7 @@ def req_7(data_structs,init_date,end_date,temp_min,temp_max):
     """
     # TODO: Realizar el requerimiento 7
 
-    new_graph=gr.newGraph(datastructure="ADJ_LIST",directed=True)
+    new_graph=gr.newGraph(datastructure="ADJ_MTX",directed=True)
     init_date=datetime.strptime(init_date,'%Y-%m-%d %H:%M')
     end_date=datetime.strptime(end_date,'%Y-%m-%d %H:%M')
     list_individual_id_selected=lt.newList(datastructure='ARRAY_LIST')
