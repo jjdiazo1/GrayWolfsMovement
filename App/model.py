@@ -485,7 +485,7 @@ def req_4(data_structs,lon_lat_1,lon_lat_2):
         lt.addLast(row,i)
         lt.addLast(row,lon)
         lt.addLast(row,lati)
-        lt.addLast(row,nua(list_adjacents_size)[1]['size'])
+        lt.addLast(row,adjacents_array['size'])
         lt.addLast(row,adjacents_array['elements'][:3]+adjacents_array['elements'][-3:])
         
         list_hiper_node_nearest=lt.newList(datastructure='ARRAY_LIST')
