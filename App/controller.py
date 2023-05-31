@@ -63,7 +63,7 @@ def load_data(control):
       l['individual-id']=l['animal-id']+'_'+l['tag-id']
       lt.addLast(list_individual_wolfs,l)
 
-   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-small.csv", encoding = "utf-8"), delimiter= ",")
+   raw_data = csv.DictReader(open("Data/wolfs/BA-Grey-Wolf-tracks-utf8-large.csv", encoding = "utf-8"), delimiter= ",")
    hash_table_per_wolf=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING') 
    hiper_nodes=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
    hiper_nodes_list=mp.newMap(numelements=45,loadfactor=0.75,maptype='PROBING')
