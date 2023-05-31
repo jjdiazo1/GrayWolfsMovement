@@ -479,16 +479,14 @@ def req_4(data_structs,lon_lat_1,lon_lat_2):
         coordinates=i.split('_')
         lon=float(coordinates[0].replace('m','-').replace('p','.'))
         lati=float(coordinates[1].replace('m','-').replace('p','.'))
-        print('\n')
-        print(list_adjacents_size)
         
         for j in lt.iterator(list_adjacents_size):
             lt.addLast(adjacents_array,j)
         lt.addLast(row,i)
         lt.addLast(row,lon)
         lt.addLast(row,lati)
-        lt.addLast(row,list_adjacents_size['size'])
-        lt.addLast(row,adjacents_array['elements'])
+        lt.addLast(row,nua(list_adjacents_size)[1]['size'])
+        lt.addLast(row,adjacents_array['elements'][:3]+adjacents_array['elements'][-3:])
         
         list_hiper_node_nearest=lt.newList(datastructure='ARRAY_LIST')
         for o in lt.iterator(data_structs['list_hiper_nodes']):
