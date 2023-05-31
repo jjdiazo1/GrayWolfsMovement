@@ -479,6 +479,8 @@ def req_4(data_structs,lon_lat_1,lon_lat_2):
         coordinates=i.split('_')
         lon=float(coordinates[0].replace('m','-').replace('p','.'))
         lati=float(coordinates[1].replace('m','-').replace('p','.'))
+        print('\n')
+        print(list_adjacents_size)
         for j in lt.iterator(list_adjacents_size):
             lt.addLast(adjacents_array,j)
         lt.addLast(row,i)
