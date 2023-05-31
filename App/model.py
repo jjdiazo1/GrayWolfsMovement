@@ -854,7 +854,7 @@ def haversine_equation(lon1, lat1, lon2, lat2):
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
     c = 2 * asin(sqrt(a)) 
     r = 6371
-    return c * r
+    return round((c * r),3)
 def first_3_last_3(data_structs,lista):
     list_=lt.newList(datastructure='ARRAY_LIST')
     for p in set(lista[:3]+lista[-3:]):
