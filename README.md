@@ -1,16 +1,10 @@
 # GreyWolfPathAnalysis
 
-[![Contributors](https://img.shields.io/github/contributors/ISIS1225DEVS/ISIS1225-Lib.svg?style=for-the-badge)](https://github.com/ISIS1225DEVS/ISIS1225-Lib/graphs/contributors)
-[![Forks](https://img.shields.io/github/forks/ISIS1225DEVS/ISIS1225-Lib.svg?style=for-the-badge)](https://github.com/ISIS1225DEVS/ISIS1225-Lib/network/members)
-[![Stargazers](https://img.shields.io/github/stars/ISIS1225DEVS/ISIS1225-Lib.svg?style=for-the-badge)](https://github.com/ISIS1225DEVS/ISIS1225-Lib/stargazers)
-[![Issues](https://img.shields.io/github/issues/ISIS1225DEVS/ISIS1225-Lib.svg?style=for-the-badge)](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](https://github.com/ISIS1225DEVS/ISIS1225-Lib/blob/master/LICENSE)
 
+## Overview 
+
 The **GreyWolfPathAnalysis** project focuses on the analysis of grey wolf movement patterns in the Alberta region of Canada. Using GPS telemetry data and various data structures such as graphs, hash tables, and stacks, this project seeks to answer key questions about wolf migration corridors, territorial behavior, and the effects of environmental conditions. The project integrates concepts from previous data structures such as Lists, Stacks, Queues, Maps, and Ordered Maps.
-
-This repository is part of the **Data Structures and Algorithms (EDA)** teaching framework at Universidad de los Andes. The repository was developed by faculty professors and staff in the Department of Systems and Computer Engineering (DISC) and uses the Non-Object-Oriented Python library **DISCLib**.
-
-[DISClib](https://github.com/ISIS1225DEVS/ISIS1225-Lib) · [DISClib Demo and Examples](https://github.com/ISIS1225DEVS/ISIS1225-Examples) · [Report Bug](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues) · [Request Feature](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues)
 
 ## Members
 
@@ -21,6 +15,22 @@ The students edit this section to add their names, Uniandes emails, and specify 
 1. Student No. 3 Name Andrés Cáceres, Student No. 3 Uniandes Email a.caceresg@uniandes.edu.co, Student No. 3 202214863.
 
 [Back to top](#greywolfpathanalysis)
+
+## Context
+
+Climate change and the loss of natural habitats are pressing issues facing nations today. In the pursuit of species conservation and coexistence, many zoologists and biologists have launched animal monitoring projects to better understand animal behavior and improve conservation policies.
+
+In the northeastern forest ecosystems of Alberta, Canada, a project was conducted between 2013 and 2014 to monitor 17 grey wolves (Canis lupus). The monitored area spanned approximately 8759 km². Using GPS telemetry, researchers observed how snowfall impacted wolf behavior. Results indicated that heavy snowfalls (over 10 cm) reduced wolf mobility from an average of 13.14 km/day to 10.06 km/day, with a variation of ± 8.92 km/day. It was noted that wolf packs only began to recover their mobility after at least two days, reaching an average of 11.3 km/day. This reduction in mobility significantly affected hunting success, as wolves spent more than 20 hours hunting deer and up to 48 hours hunting moose.
+
+These findings are critical for understanding how extreme weather conditions, exacerbated by climate change, impact wolf behavior and hunting patterns, potentially leading to increased contact with human settlements. This project is based on data collected by researchers Amanda Droghini and Stan Boutin from the University of Alberta's Department of Biological Sciences, as published in their 2018 paper, "The calm during the storm: Snowfall events decrease the movement rates of grey wolves (Canis lupus)."
+
+### Data Loading
+
+The dataset for this challenge was sourced from the Movebank repository, specifically from the study "Boutin Alberta Grey Wolf." The dataset includes information from 46 wolves and 239,194 GPS telemetry data points recorded between February 2012 and September 2014. The original data contains two key tables: one detailing the GPS telemetry events and another describing the individual wolves involved in the study.
+
+This repository is part of the **Data Structures and Algorithms (EDA)** teaching framework at Universidad de los Andes. The repository was developed by faculty professors and staff in the Department of Systems and Computer Engineering (DISC) and uses the Non-Object-Oriented Python library **DISCLib**.
+
+[DISClib](https://github.com/ISIS1225DEVS/ISIS1225-Lib) · [DISClib Demo and Examples](https://github.com/ISIS1225DEVS/ISIS1225-Examples) · [Report Bug](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues) · [Request Feature](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues)
 
 ## About The Project
 
