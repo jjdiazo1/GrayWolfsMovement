@@ -142,3 +142,66 @@ As a conservationist biologist, I want to observe the effects of climatic condit
 ### Requirement 8: Bonus - Visualize results for all requirements (Group)
 
 As a conservationist biologist, I want to visualize the results of all the application requirements. For this, teams are encouraged to graphically represent the results using multimedia resources and graphical interfaces. Suggested tools
+
+
+[Back to top](#greywolfpathanalysis)
+
+## Usage
+
+To use this template, you need to follow the steps below:
+
+* Read the official project document published in the course official site at [BrightSpace](https://bloqueneon.uniandes.edu.co/d2l/home).
+* Distribute the project functionalities and implementation responsibilities among the group members.
+* Download the official dataset for the project at the course official site at [BrightSpace](https://bloqueneon.uniandes.edu.co/d2l/home).
+* Unzip and load the dataset into the application at the [Data](./Data) folder.
+* Import the necessary modules from [DISClib](https://github.com/ISIS1225DEVS/ISIS1225-Lib) into the MVC scripts at the [App](./App) folder.
+* Implement the missing functions according to the project needs in the MVC scripts at the [App](./App) folder.
+* Evaluate the implementation of the MVC scripts, record your tests and analysis in the documents at the [Docs](./Docs) folder (The report **MUST BE** in PDF format).
+
+[Back to top](#greywolfpathanalysis)
+
+## Contact and support
+
+For further information and contact, use the following links:
+
+* Official Repository [DISClib](https://github.com/ISIS1225DEVS/ISIS1225-Lib).
+* Repository for [Demo and Examples](https://github.com/ISIS1225DEVS/ISIS1225-Examples).
+
+If you require further information, please contact us [via this email](mailto:isis1225@uniandes.edu.co).
+
+[Back to top](#greywolfpathanalysis)
+
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this project better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+[Back to top](#greywolfpathanalysis)
+
+## License
+
+Copyright 2020, Departamento de sistemas y Computación, Universidad de Los Andes.
+Developed for the class _"ISIS1225 - Estructuras de Datos y Algoritmos"_ or _"ISIS1225 - Data Structure and Algorithms"_ in English.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [GNU General Public License](http://www.gnu.org/licenses/) for more information.
+
+[Back to top](#greywolfpathanalysis)
+
+## Authors and acknowledgment
+
+* [Dario Correal](https://github.com/dariocorreal) is the original author and main developer of the library.
+* [Santiago Arteaga](https://github.com/phillipus85) is a contributor and repository administrator. 
+* [Luis Florez](https://github.com/le99) is a contributor and developed examples and tutorials for the library.
+
+[Back to top](#greywolfpathanalysis)
