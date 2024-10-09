@@ -1,11 +1,5 @@
 # GreyWolfPathAnalysis
 
-[![Contributors][challenge4-contributors-shield]][challenge4-contributors-url]
-[![Forks][challenge4-forks-shield]][challenge4-forks-url]
-[![Stargazers][challenge4-stars-shield]][challenge4-stars-url]
-[![Issues][challenge4-issues-shield]][challenge4-issues-url]
-[![License][challenge4-license-shield]][challenge4-license-url]
-
 The **GreyWolfPathAnalysis** project focuses on the analysis of grey wolf movement patterns in the Alberta region of Canada. Using GPS telemetry data and various data structures such as graphs, hash tables, and stacks, this project seeks to answer key questions about wolf migration corridors, territorial behavior, and the effects of environmental conditions. The project integrates concepts from previous data structures such as Lists, Stacks, Queues, Maps, and Ordered Maps.
 
 This repository is part of the **Data Structures and Algorithms (EDA)** teaching framework at Universidad de los Andes. The repository was developed by faculty professors and staff in the Department of Systems and Computer Engineering (DISC) and uses the Non-Object-Oriented Python library **DISCLib**.
