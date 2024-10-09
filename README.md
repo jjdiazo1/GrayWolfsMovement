@@ -28,13 +28,18 @@ These findings are critical for understanding how extreme weather conditions, ex
 
 The dataset for this challenge was sourced from the Movebank repository, specifically from the study "Boutin Alberta Grey Wolf." The dataset includes information from 46 wolves and 239,194 GPS telemetry data points recorded between February 2012 and September 2014. The original data contains two key tables: one detailing the GPS telemetry events and another describing the individual wolves involved in the study.
 
+### References
+
+1. [United Nations Sustainable Development Goals (Biodiversity)](https://www.un.org/sustainabledevelopment/biodiversity/)
+2. [The calm during the storm: Snowfall events decrease the movement rates of grey wolves (Canis lupus)](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0205742), published October 31, 2018.
+3. [Boutin Alberta Grey Wolf, Movebank Study](https://www.movebank.org/cms/webapp?gwt_fragment=page=studies,path=study492444603)
+
+## About the repository
 This repository is part of the **Data Structures and Algorithms (EDA)** teaching framework at Universidad de los Andes. The repository was developed by faculty professors and staff in the Department of Systems and Computer Engineering (DISC) and uses the Non-Object-Oriented Python library **DISCLib**.
 
 [DISClib](https://github.com/ISIS1225DEVS/ISIS1225-Lib) · [DISClib Demo and Examples](https://github.com/ISIS1225DEVS/ISIS1225-Examples) · [Report Bug](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues) · [Request Feature](https://github.com/ISIS1225DEVS/ISIS1225-Lib/issues)
 
 ## About The Project
-
-This project provides tools to analyze the movement patterns of grey wolves in the Alberta region of Canada. By leveraging directed and undirected graphs, the project helps visualize migration paths, identify common meeting points, and assess the effects of environmental conditions on wolf behavior. It integrates data structures like hash tables, stacks, and trees to efficiently manage large datasets from GPS telemetry records, offering insights into wolf territories and corridors under various climatic conditions.
 
 **IMPORTANT** This is a work in progress and is part of a teaching framework for undergraduate college students at Universidad de los Andes. This project Is NOT intended as a full-functional source code project.
 
